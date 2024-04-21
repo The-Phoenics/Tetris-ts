@@ -10,22 +10,22 @@ body {
     background-color: rgb(113, 113, 113);
 }
 
-.canvas-container {
-    margin-top: calc((100vw - (60vw / 2) * 3) / 2);
-    width: 100%;
-    background-color: #636363;
-}
-
 button:hover {
     cursor: pointer;
+}
+
+.canvas-container {
+    height: 80vh;
+    min-height: 700px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .game-canvas {
     display: block;
     margin: 0 auto;
-    width: 60vw;
-    aspect-ratio: 2 / 3;
-    background-color: #c3c3c3;
+    background-color: #f0f0f0;
 }
 
 .start-btn {
@@ -42,4 +42,22 @@ button:hover {
     font-weight: bold;
     text-transform: uppercase;
     font-family: "Pixelify Sans", sans-serif;
+}
+
+.top {
+    height: 8vh;
+}
+
+.bottom {
+    height: 10vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@media (max-width: 400px) {
+    .game-canvas {
+        max-width: 100%;
+        max-height: 100%;
+    }
 }
