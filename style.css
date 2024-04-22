@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap');
 
 * {
     padding: 0;
@@ -10,16 +11,20 @@ body {
     background-color: rgb(113, 113, 113);
 }
 
+h1 {
+    color: white;
+    font-family: "Play", sans-serif;
+}
+
 button:hover {
     cursor: pointer;
 }
 
 .canvas-container {
-    height: 80vh;
-    min-height: 700px;
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 90vh;
 }
 
 .game-canvas {
@@ -28,10 +33,25 @@ button:hover {
     background-color: #f0f0f0;
 }
 
+.top {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 5vh;
+}
+
+.bottom {
+    height: 5vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .start-btn {
     display: block;
     width: 140px;
-    height: 40px;
+    height: 4vh;
     text-decoration : none;
     border : solid 2px #333333;
     border-radius : 25px;
@@ -44,16 +64,6 @@ button:hover {
     font-family: "Pixelify Sans", sans-serif;
 }
 
-.top {
-    height: 8vh;
-}
-
-.bottom {
-    height: 10vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
 
 @media (max-width: 400px) {
     .game-canvas {

@@ -1,8 +1,10 @@
 import { GameContext } from "./Types";
 
-const GAP = 2;
 const ROWS = 20;
 const COLUMNS = 10;
+
+// gap between blocks in board
+const GAP = 2;
 
 export class Game {
     public ctx: CanvasRenderingContext2D;
@@ -16,8 +18,8 @@ export class Game {
     constructor(config: GameContext) {
         this.canvas = config.canvas;
         this.ctx = config.canvasContext;
-        this.canvas_width = 400;
-        this.canvas_height = 600;
+        this.canvas_width = 0;
+        this.canvas_height = 0;
         this.blockSize = 0;
 
         this.updateCanvasDimensions();
@@ -27,28 +29,26 @@ export class Game {
         })
     }
 
-    clearCanvas = () => {
+    private clearCanvas = () => {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
-    // calculate height and block size for canvas based on view width
-    updateCanvasDimensions = () => {
-        this.calculateSize();
-        this.calcHeight();
-    }
+    /*
+    * Resonsive canvas
+    * calculate height and block size for canvas based on view width
+    */
+    private updateCanvasDimensions = () => {
+        // ratio of canvas width to height
+        const RATIO = 0.5;
+        this.canvas.height = document.querySelector('.canvas-container')?.clientHeight!;
+        this.canvas.width = this.canvas.height * RATIO
 
-    calcHeight = (): void => {
-        let gapArea = (ROWS + 1) * GAP;
-        let columnBlockArea = ROWS * this.blockSize;
-        this.canvas.height = gapArea + columnBlockArea
-    }
-
-    calculateSize = (): void => {
+        // calculate block size
         let gapArea = COLUMNS + 1;
         this.blockSize = (this.canvas.width - gapArea * GAP) / COLUMNS;
     }
  
-    drawGrid = () => {
+    private drawGrid = () => {
         for (let i = 0; i < ROWS; i++) {
             for (let j = 0; j < COLUMNS; j++) {
                 let xpos = (this.blockSize + GAP) * j + GAP;
@@ -59,14 +59,14 @@ export class Game {
         }
     }
 
-    update = () => {}
+    public update = () => {}
 
-    render = () => {
+    public render = () => {
         this.drawGrid();
     }
 
     // game loop
-    run = () => {
+    public run = () => {
         this.clearCanvas();
         this.update();
         this.render();
