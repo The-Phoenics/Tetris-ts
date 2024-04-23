@@ -1,7 +1,5 @@
+import { Board } from "./Board.mjs";
 import { GameContext } from "./Types";
-
-const ROWS = 20;
-const COLUMNS = 10;
 
 // gap between blocks in board
 const GAP = 2;
@@ -9,8 +7,9 @@ const GAP = 2;
 export class Game {
     public ctx: CanvasRenderingContext2D;
     public canvas: HTMLCanvasElement;
-    public canvas_width: number; 
+    public canvas_width: number;
     public canvas_height: number;
+    public board: Board;
 
     private blockSize: number;
 
@@ -22,54 +21,58 @@ export class Game {
         this.canvas_height = 0;
         this.blockSize = 0;
 
+        this.board = new Board();
+
         this.updateCanvasDimensions();
-        window.addEventListener('resize', () => {
-            console.log('resize')
+        window.addEventListener("resize", () => {
+            console.log("resize");
             this.updateCanvasDimensions();
-        })
+        });
     }
 
     private clearCanvas = () => {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    }
+    };
 
     /*
-    * Resonsive canvas
-    * calculate height and block size for canvas based on view width
-    */
+     * Resonsive canvas
+     * calculate height and block size for canvas based on view width
+     */
     private updateCanvasDimensions = () => {
         // ratio of canvas width to height
         const RATIO = 0.5;
-        this.canvas.height = document.querySelector('.canvas-container')?.clientHeight!;
-        this.canvas.width = this.canvas.height * RATIO
+        this.canvas.height =
+            document.querySelector(".canvas-container")?.clientHeight!;
+        this.canvas.width = this.canvas.height * RATIO;
 
         // calculate block size
-        let gapArea = COLUMNS + 1;
-        this.blockSize = (this.canvas.width - gapArea * GAP) / COLUMNS;
-    }
- 
+        let gapArea = this.board.COLUMNS + 1;
+        this.blockSize =
+            (this.canvas.width - gapArea * GAP) / this.board.COLUMNS;
+    };
+
     private drawGrid = () => {
-        for (let i = 0; i < ROWS; i++) {
-            for (let j = 0; j < COLUMNS; j++) {
+        for (let i = 0; i < this.board.ROWS; i++) {
+            for (let j = 0; j < this.board.COLUMNS; j++) {
                 let xpos = (this.blockSize + GAP) * j + GAP;
-                let ypos = (this.blockSize + GAP) * i + GAP
+                let ypos = (this.blockSize + GAP) * i + GAP;
                 this.ctx.fillStyle = "black";
                 this.ctx.fillRect(xpos, ypos, this.blockSize, this.blockSize);
             }
         }
-    }
+    };
 
-    public update = () => {}
+    public update = () => {};
 
     public render = () => {
         this.drawGrid();
-    }
+    };
 
     // game loop
     public run = () => {
         this.clearCanvas();
         this.update();
         this.render();
-        window.requestAnimationFrame(this.run)
-    }
+        window.requestAnimationFrame(this.run);
+    };
 }
