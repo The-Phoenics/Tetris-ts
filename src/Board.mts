@@ -1,11 +1,10 @@
-export class Board {
-    public readonly ROWS: number = 20;
-    public readonly COLUMNS: number = 10;
+import { GLOBAL } from "./Types.mjs";
 
+export class Board {
     public boardData: number[];
 
     constructor() {
-        this.boardData = new Array(this.ROWS * this.COLUMNS).fill(0);
+        this.boardData = new Array(GLOBAL.ROWS * GLOBAL.COLUMNS).fill(0);
     }
 
     public update(): void {}

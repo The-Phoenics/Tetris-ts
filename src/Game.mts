@@ -1,8 +1,7 @@
+import { collapseTextChangeRangesAcrossMultipleVersions } from "../node_modules/typescript/lib/typescript";
 import { Board } from "./Board.mjs";
-import { GameContext } from "./Types";
-
-// gap between blocks in board
-const GAP = 2;
+import { TShape } from "./Shape.mjs";
+import { GLOBAL, GameContext, Point } from "./Types.mjs";
 
 export class Game {
     public ctx: CanvasRenderingContext2D;
@@ -10,8 +9,10 @@ export class Game {
     public canvas_width: number;
     public canvas_height: number;
     public board: Board;
-
     private blockSize: number;
+
+    private tshapemino = new TShape('blue');
+    private pointsForTetromino: Point[] = [];
 
     // constructor
     constructor(config: GameContext) {
@@ -21,13 +22,27 @@ export class Game {
         this.canvas_height = 0;
         this.blockSize = 0;
 
-        this.board = new Board();
-
+        // initalize canvas 
         this.updateCanvasDimensions();
         window.addEventListener("resize", () => {
             console.log("resize");
             this.updateCanvasDimensions();
         });
+
+        this.board = new Board();
+        
+        // init
+        this.initialize();
+    }
+
+    private initialize = () => {
+        let x = GLOBAL.COLUMNS / 2
+        let y = 2 
+        this.pointsForTetromino.push(new Point(x, y))
+        this.pointsForTetromino.push(new Point(x - 1, y))
+        this.pointsForTetromino.push(new Point(x + 1, y))
+        this.pointsForTetromino.push(new Point(x, y + 1))
+        this.tshapemino.points = this.pointsForTetromino;
     }
 
     private clearCanvas = () => {
@@ -46,26 +61,34 @@ export class Game {
         this.canvas.width = this.canvas.height * RATIO;
 
         // calculate block size
-        let gapArea = this.board.COLUMNS + 1;
+        let gapArea = GLOBAL.COLUMNS + 1;
         this.blockSize =
-            (this.canvas.width - gapArea * GAP) / this.board.COLUMNS;
+            (this.canvas.width - gapArea * GLOBAL.GAP) / GLOBAL.COLUMNS;
     };
 
     private drawGrid = () => {
-        for (let i = 0; i < this.board.ROWS; i++) {
-            for (let j = 0; j < this.board.COLUMNS; j++) {
-                let xpos = (this.blockSize + GAP) * j + GAP;
-                let ypos = (this.blockSize + GAP) * i + GAP;
+        for (let i = 0; i < GLOBAL.ROWS; i++) {
+            for (let j = 0; j < GLOBAL.COLUMNS; j++) {
+                let xpos = (this.blockSize + GLOBAL.GAP) * j + GLOBAL.GAP;
+                let ypos = (this.blockSize + GLOBAL.GAP) * i + GLOBAL.GAP;
                 this.ctx.fillStyle = "black";
                 this.ctx.fillRect(xpos, ypos, this.blockSize, this.blockSize);
             }
         }
     };
 
+    private drawBlock = (point: Point, color: string) => {
+        this.ctx.fillStyle = color;
+        let x = GLOBAL.GAP * point.x + this.blockSize * (point.x - 1);
+        let y = GLOBAL.GAP * point.y + this.blockSize * (point.y - 1);
+        this.ctx.fillRect(x, y, this.blockSize, this.blockSize);
+    };
+
     public update = () => {};
 
     public render = () => {
         this.drawGrid();
+        this.tshapemino.draw(this.drawBlock);
     };
 
     // game loop

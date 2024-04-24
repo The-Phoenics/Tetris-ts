@@ -1,7 +1,7 @@
-import { Point } from "./Types";
+import { Point } from "./Types.mjs";
 
 export class Straight {
-    private points: Point[];
+    public points: Point[];
 
     constructor() {
         this.points = [];
@@ -13,7 +13,7 @@ export class Straight {
 }
 
 export class SquareShape {
-    private points: Point[];
+    public points: Point[];
 
     constructor() {
         this.points = [];
@@ -24,19 +24,27 @@ export class SquareShape {
 }
 
 export class TShape {
-    private points: Point[];
+    public points: Point[];
+    private color: string;
 
-    constructor() {
+    constructor(colorArg: string = 'red') {
+        this.color = colorArg
         this.points = [];
     }
 
     public rotate(): void {}
     public drop(): void {}
     public move(): void {}
+
+    public draw(drawBlock: (point: Point, color: string) => void) {
+        this.points.forEach(point => {
+            drawBlock(point, this.color)
+        })
+    }
 }
 
 export class SkewShape {
-    private points: Point[];
+    public points: Point[];
 
     constructor() {
         this.points = [];
