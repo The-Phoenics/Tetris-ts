@@ -16,6 +16,12 @@ export class Point {
 export const GLOBAL = {
     ROWS: 20,
     COLUMNS: 10,
-    // gap between blocks
     GAP: 2,
+    COLORS: ['red', 'blue', 'green', 'yellow', 'orange'],
 };
+
+export function randomColorString(): string {
+    let randomIdx = Math.floor(Math.random() * GLOBAL.COLORS.length)
+    return GLOBAL.COLORS[randomIdx]
+
+}

@@ -1,4 +1,4 @@
-import { GLOBAL } from "./Types.mjs";
+import { GLOBAL } from "./Global.mjs";
 
 export class Board {
     public boardData: number[];
