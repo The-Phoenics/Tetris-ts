@@ -18,7 +18,6 @@ function Init(): void {
 }
 
 function RunGame(): void {
-    console.log("Running game...");
     let game = new Game({
         canvas: CANVAS,
         canvasContext: CANVAS_CONTEXT,

@@ -17,11 +17,46 @@ export const GLOBAL = {
     ROWS: 20,
     COLUMNS: 10,
     GAP: 2,
-    COLORS: ['red', 'blue', 'green', 'yellow', 'orange'],
+    COLORS: ["red", "blue", "green", "yellow", "orange", "cyan"],
 };
 
 export function randomColorString(): string {
-    let randomIdx = Math.floor(Math.random() * GLOBAL.COLORS.length)
-    return GLOBAL.COLORS[randomIdx]
+    let randomIdx = Math.floor(Math.random() * GLOBAL.COLORS.length + 1);
+    return GLOBAL.COLORS[randomIdx];
+}
 
+export function canMove(direction: string, points: Point[]) {
+    let canMoveInDirection = true;
+    switch (direction) {
+        case "down":
+            for (let i = 0; i < points.length; i++) {
+                if (points[i].y == GLOBAL.ROWS) {
+                    canMoveInDirection = false;
+                    break;
+                }
+            }
+            break;
+
+        case "left":
+            for (let i = 0; i < points.length; i++) {
+                if (points[i].x == 1) {
+                    canMoveInDirection = false;
+                    break;
+                }
+            }
+            break;
+
+        case "right":
+            for (let i = 0; i < points.length; i++) {
+                if (points[i].x == GLOBAL.COLUMNS) {
+                    canMoveInDirection = false;
+                    break;
+                }
+            }
+            break;
+
+        default:
+            break;
+    }
+    return canMoveInDirection;
 }

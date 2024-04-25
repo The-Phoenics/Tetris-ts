@@ -1,6 +1,6 @@
 import { Board } from "./Board.mjs";
 import { TShape } from "./Shape.mjs";
-import { GLOBAL, GameContext, Point } from "./Global.mjs";
+import { GLOBAL, GameContext, Point, randomColorString } from "./Global.mjs";
 
 export class Game {
     public ctx: CanvasRenderingContext2D;
@@ -10,8 +10,7 @@ export class Game {
     public board: Board;
     private blockSize: number;
 
-    private tshapemino = new TShape('blue');
-    private pointsForTetromino: Point[] = [];
+    private tshapemino = new TShape(new Point(GLOBAL.COLUMNS / 2, 0), randomColorString());
 
     // constructor
     constructor(config: GameContext) {
@@ -21,28 +20,39 @@ export class Game {
         this.canvas_height = 0;
         this.blockSize = 0;
 
+        // Game Controls
+        window.addEventListener('keydown', (e) => {
+            switch (e.key) {
+                case "ArrowLeft":
+                    this.tshapemino.move("left")
+                    break;
+
+                case "ArrowRight":
+                    this.tshapemino.move("right")
+                    break;
+
+                case "ArrowDown":
+                    this.tshapemino.move("down")
+                    break;
+            
+                default:
+                    break;
+            }
+        })
+
         // initalize canvas 
         this.updateCanvasDimensions();
         window.addEventListener("resize", () => {
-            console.log("resize");
             this.updateCanvasDimensions();
         });
 
         this.board = new Board();
-        
+
         // init
         this.initialize();
     }
 
-    private initialize = () => {
-        let x = GLOBAL.COLUMNS / 2
-        let y = 2 
-        this.pointsForTetromino.push(new Point(x, y))
-        this.pointsForTetromino.push(new Point(x - 1, y))
-        this.pointsForTetromino.push(new Point(x + 1, y))
-        this.pointsForTetromino.push(new Point(x, y + 1))
-        this.tshapemino.points = this.pointsForTetromino;
-    }
+    private initialize = () => {}
 
     private clearCanvas = () => {
         this.ctx.fillStyle = 'white';

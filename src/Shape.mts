@@ -1,4 +1,4 @@
-import { GLOBAL, Point } from "./Global.mjs";
+import { GLOBAL, Point, canMove } from "./Global.mjs";
 
 export class Straight {
     public points: Point[];
@@ -24,42 +24,109 @@ export class SquareShape {
 }
 
 export class TShape {
+    private initalPosition: Point;
     public points: Point[];
     private color: string;
     private moveTimer: number = 1000;
     private moveDownInterval;
-    public isAtBottom: boolean =  false;
+    public isAtBottom: boolean = false;
+    public currentRotation: number = 1;
 
-    constructor(colorArg: string = 'red') {
-        this.color = colorArg
-        this.points = [];
+    constructor(initPos: Point, colorArg: string = "red") {
+        this.initalPosition = initPos;
+        this.color = colorArg;
+        this.currentRotation = Math.floor(Math.random() * 4 + 1);
+        this.points = this.rotate();
 
         this.moveDownInterval = setInterval(() => {
-            this.move('down') 
-        }, this.moveTimer)
+            this.move("down");
+        }, this.moveTimer);
     }
 
-    public rotate(): void {}
+    public rotate(clockwise: boolean = true): Point[] {
+        let x = this.initalPosition.x;
+        let y = this.initalPosition.y;
+        let newPointsArray: Point[] = [];
+        let rotation: number =
+            this.currentRotation + 1 > 4 ? 1 : this.currentRotation + 1;
+        switch (rotation) {
+            case 1:
+                newPointsArray.push(new Point(x, y));
+                newPointsArray.push(new Point(x - 1, y));
+                newPointsArray.push(new Point(x, y + 1));
+                newPointsArray.push(new Point(x, y - 1));
+                break;
+
+            case 2:
+                newPointsArray.push(new Point(x, y));
+                newPointsArray.push(new Point(x - 1, y));
+                newPointsArray.push(new Point(x + 1, y));
+                newPointsArray.push(new Point(x, y - 1));
+                break;
+
+            case 3:
+                newPointsArray.push(new Point(x, y));
+                newPointsArray.push(new Point(x + 1, y));
+                newPointsArray.push(new Point(x, y + 1));
+                newPointsArray.push(new Point(x, y - 1));
+                break;
+
+            case 4:
+                newPointsArray.push(new Point(x, y));
+                newPointsArray.push(new Point(x - 1, y));
+                newPointsArray.push(new Point(x + 1, y));
+                newPointsArray.push(new Point(x, y + 1));
+                break;
+
+            default:
+                break;
+        }
+        return newPointsArray;
+    }
+
     public drop(): void {}
+
     public move(direction: string): void {
-        if (direction === 'down') {
-            this.points.forEach(point => {
-                point.y += 1;
-            })
+        switch (direction) {
+            case "down":
+                if (canMove(direction, this.points)) {
+                    this.points.forEach((point) => {
+                        point.y += 1;
+                    });
+                }
+                break;
+
+            case "left":
+                if (canMove(direction, this.points)) {
+                    this.points.forEach((point) => {
+                        point.x -= 1;
+                    });
+                }
+                break;
+
+            case "right":
+                if (canMove(direction, this.points)) {
+                    this.points.forEach((point) => {
+                        point.x += 1;
+                    });
+                }
+                break;
+
+            default:
+                break;
         }
     }
 
     public update = () => {
-        this.points.forEach(point => {
-            if (point.y >= GLOBAL.ROWS)
-                clearInterval(this.moveDownInterval)
-        })
-    }
+        this.points.forEach((point) => {
+            if (point.y >= GLOBAL.ROWS) clearInterval(this.moveDownInterval);
+        });
+    };
 
     public draw(drawBlock: (point: Point, color: string) => void) {
-        this.points.forEach(point => {
-            drawBlock(point, this.color)
-        })
+        this.points.forEach((point) => {
+            drawBlock(point, this.color);
+        });
     }
 }
 
