@@ -10,7 +10,7 @@ export class Game {
     public board: Board;
     private blockSize: number;
 
-    private tshapemino = new TShape(new Point(GLOBAL.COLUMNS / 2, 0), randomColorString());
+    private tetromino = new TShape(new Point(GLOBAL.COLUMNS / 2, 0), randomColorString());
 
     // constructor
     constructor(config: GameContext) {
@@ -21,26 +21,34 @@ export class Game {
         this.blockSize = 0;
 
         // Game Controls
-        window.addEventListener('keydown', (e) => {
+        window.addEventListener("keydown", (e) => {
             switch (e.key) {
+                case "ArrowUp":
+                case "w":
+                    this.tetromino.rotate(true);
+                    break;
+
                 case "ArrowLeft":
-                    this.tshapemino.move("left")
+                case "a":
+                    this.tetromino.move("left");
                     break;
 
                 case "ArrowRight":
-                    this.tshapemino.move("right")
+                case "d":
+                    this.tetromino.move("right");
                     break;
 
                 case "ArrowDown":
-                    this.tshapemino.move("down")
+                case "s":
+                    this.tetromino.move("down");
                     break;
-            
+
                 default:
                     break;
             }
-        })
+        });
 
-        // initalize canvas 
+        // initalize canvas
         this.updateCanvasDimensions();
         window.addEventListener("resize", () => {
             this.updateCanvasDimensions();
@@ -52,10 +60,10 @@ export class Game {
         this.initialize();
     }
 
-    private initialize = () => {}
+    private initialize = () => {};
 
     private clearCanvas = () => {
-        this.ctx.fillStyle = 'white';
+        this.ctx.fillStyle = "white";
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     };
 
@@ -68,8 +76,7 @@ export class Game {
         const RATIO = 0.502;
         this.canvas.height = Math.floor(document.querySelector(".canvas-container")?.clientHeight!);
 
-        if (this.canvas.height % 2 != 0)
-            this.canvas.height = this.canvas.height - 1
+        if (this.canvas.height % 2 != 0) this.canvas.height = this.canvas.height - 1;
 
         this.canvas.width = Math.floor(this.canvas.height * RATIO);
 
@@ -97,12 +104,16 @@ export class Game {
     };
 
     public update = () => {
-        this.tshapemino.update()
+        this.tetromino.update();
+        if (this.tetromino.hasLanded) {
+            this.board.update(this.tetromino);
+            this.tetromino = new TShape(new Point(GLOBAL.COLUMNS / 2, 0), randomColorString());
+        }
     };
 
     public render = () => {
-        this.drawGrid();
-        this.tshapemino.draw(this.drawBlock);
+        this.board.render(this.ctx, this.blockSize);
+        this.tetromino.render(this.drawBlock);
     };
 
     // game loop

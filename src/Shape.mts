@@ -1,9 +1,19 @@
 import { GLOBAL, Point, canMove } from "./Global.mjs";
 
-export class Straight {
+export class Shape {
+    public points: Point[] = [];
+    public color: string = "red";
+
+    public rotate(): void {}
+    public drop(): void {}
+    public move(direction: string): void {}
+}
+
+export class Straight extends Shape {
     public points: Point[];
 
     constructor() {
+        super();
         this.points = [];
     }
 
@@ -12,10 +22,11 @@ export class Straight {
     public move(): void {}
 }
 
-export class SquareShape {
+export class SquareShape extends Shape {
     public points: Point[];
 
     constructor() {
+        super();
         this.points = [];
     }
 
@@ -23,33 +34,32 @@ export class SquareShape {
     public move(): void {}
 }
 
-export class TShape {
-    private initalPosition: Point;
-    public points: Point[];
-    private color: string;
+export class TShape extends Shape {
+    public points: Point[] = [];
+    public color: string;
     private moveTimer: number = 1000;
     private moveDownInterval;
-    public isAtBottom: boolean = false;
+    public hasLanded: boolean = false;
     public currentRotation: number = 1;
 
     constructor(initPos: Point, colorArg: string = "red") {
-        this.initalPosition = initPos;
+        super();
+        this.points.push(initPos);
         this.color = colorArg;
         this.currentRotation = Math.floor(Math.random() * 4 + 1);
-        this.points = this.rotate();
+        this.rotate();
 
         this.moveDownInterval = setInterval(() => {
             this.move("down");
         }, this.moveTimer);
     }
 
-    public rotate(clockwise: boolean = true): Point[] {
-        let x = this.initalPosition.x;
-        let y = this.initalPosition.y;
+    public rotate(clockwise: boolean = true): void {
+        let x = this.points[0].x;
+        let y = this.points[0].y;
         let newPointsArray: Point[] = [];
-        let rotation: number =
-            this.currentRotation + 1 > 4 ? 1 : this.currentRotation + 1;
-        switch (rotation) {
+        this.currentRotation = this.currentRotation + 1 > 4 ? 1 : this.currentRotation + 1;
+        switch (this.currentRotation) {
             case 1:
                 newPointsArray.push(new Point(x, y));
                 newPointsArray.push(new Point(x - 1, y));
@@ -81,59 +91,65 @@ export class TShape {
             default:
                 break;
         }
-        return newPointsArray;
+        this.points = newPointsArray;
     }
 
     public drop(): void {}
 
     public move(direction: string): void {
-        switch (direction) {
-            case "down":
-                if (canMove(direction, this.points)) {
-                    this.points.forEach((point) => {
-                        point.y += 1;
-                    });
-                }
-                break;
+        if (!this.hasLanded) {
+            switch (direction) {
+                case "down":
+                    if (canMove(direction, this.points)) {
+                        this.points.forEach((point) => {
+                            point.y += 1;
+                        });
+                    }
+                    break;
 
-            case "left":
-                if (canMove(direction, this.points)) {
-                    this.points.forEach((point) => {
-                        point.x -= 1;
-                    });
-                }
-                break;
+                case "left":
+                    if (canMove(direction, this.points)) {
+                        this.points.forEach((point) => {
+                            point.x -= 1;
+                        });
+                    }
+                    break;
 
-            case "right":
-                if (canMove(direction, this.points)) {
-                    this.points.forEach((point) => {
-                        point.x += 1;
-                    });
-                }
-                break;
+                case "right":
+                    if (canMove(direction, this.points)) {
+                        this.points.forEach((point) => {
+                            point.x += 1;
+                        });
+                    }
+                    break;
 
-            default:
-                break;
+                default:
+                    break;
+            }
         }
     }
 
     public update = () => {
         this.points.forEach((point) => {
-            if (point.y >= GLOBAL.ROWS) clearInterval(this.moveDownInterval);
+            if (point.y >= GLOBAL.ROWS) {
+                clearInterval(this.moveDownInterval);
+                this.hasLanded = true;
+            }
         });
     };
 
-    public draw(drawBlock: (point: Point, color: string) => void) {
+    public render(drawBlock: (point: Point, color: string) => void) {
         this.points.forEach((point) => {
             drawBlock(point, this.color);
         });
     }
 }
 
-export class SkewShape {
+export class SkewShape extends Shape {
     public points: Point[];
 
     constructor() {
+        super();
         this.points = [];
     }
 
