@@ -1,5 +1,5 @@
 import { Board } from "./Board.mjs";
-import { TShape } from "./Shape.mjs";
+import { IShape, JShape, OShape, SShape, TShape } from "./Shape.mjs";
 import { GLOBAL, GameContext, Point, randomColorString } from "./Global.mjs";
 
 export class Game {
@@ -10,7 +10,7 @@ export class Game {
     public board: Board;
     private blockSize: number;
 
-    private tetromino = new TShape(new Point(GLOBAL.COLUMNS / 2, 0), randomColorString());
+    private tetromino = new JShape(randomColorString());
 
     // constructor
     constructor(config: GameContext) {
@@ -107,7 +107,7 @@ export class Game {
         this.tetromino.update();
         if (this.tetromino.hasLanded) {
             this.board.update(this.tetromino);
-            this.tetromino = new TShape(new Point(GLOBAL.COLUMNS / 2, 0), randomColorString());
+            this.tetromino = new TShape(randomColorString());
         }
     };
 

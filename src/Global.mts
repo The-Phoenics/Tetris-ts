@@ -13,11 +13,13 @@ export class Point {
     }
 }
 
+const columns = 10;
 export const GLOBAL = {
     ROWS: 20,
-    COLUMNS: 10,
+    COLUMNS: columns,
     GAP: 2,
     COLORS: ["red", "blue", "green", "yellow", "orange", "cyan"],
+    INITIAL_POSITION: new Point(columns / 2, 0)
 };
 
 export function randomColorString(): string {
