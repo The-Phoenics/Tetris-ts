@@ -1,31 +1,32 @@
-import { GLOBAL } from "./Global.mjs";
+import { GLOBAL, Point } from "./Global.mjs";
 import { Shape } from "./Shape.mjs";
 
 export class Board {
     public boardData: string[];
-    public log: boolean = false;
 
     constructor() {
-        this.boardData = new Array(GLOBAL.ROWS * GLOBAL.COLUMNS).fill("black");
+        this.boardData = new Array(GLOBAL.ROWS * GLOBAL.COLUMNS).fill("#282828");
     }
 
     public update(shape: Shape): void {
         shape.points.forEach((point) => {
-            const idx = GLOBAL.COLUMNS * (point.y - 1) + point.x;
+            const idx = (point.y - 1) * GLOBAL.COLUMNS + (point.x - 1);
             this.boardData[idx] = shape.color;
         });
     }
 
-    public render(ctx: CanvasRenderingContext2D, blockSize: number): void {
-        for (let i = 0; i < GLOBAL.ROWS; i++) {
-            for (let j = 0; j < GLOBAL.COLUMNS; j++) {
-                let xpos = (blockSize + GLOBAL.GAP) * j + GLOBAL.GAP;
-                let ypos = (blockSize + GLOBAL.GAP) * i + GLOBAL.GAP;
-                let index = i * GLOBAL.COLUMNS + j + 1;
-
-                ctx.fillStyle = this.boardData[index];
-                ctx.fillRect(xpos, ypos, blockSize, blockSize);
+    public render(drawBlock: (point: Point, color: string) => void): void {
+        for (let x = 0; x < GLOBAL.ROWS; x++) {
+            for (let y = 0; y < GLOBAL.COLUMNS; y++) {
+                // board index is for the color of block
+                let boardIdx = x * GLOBAL.COLUMNS + y;
+                drawBlock(new Point(y + 1, x + 1), this.boardData[boardIdx]);
             }
         }
+    }
+
+    public isEmptyAt(point: Point): boolean {
+        const idx: number = point.y * GLOBAL.COLUMNS + point.x;
+        return this.boardData[idx] === "black";
     }
 }

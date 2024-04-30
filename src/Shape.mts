@@ -1,5 +1,4 @@
-import { ProgramUpdateLevel } from "../node_modules/typescript/lib/typescript";
-import { GLOBAL, Point, canMove } from "./Global.mjs";
+import { GLOBAL, Point, canMove, randomColorString } from "./Global.mjs";
 
 export class Shape {
     public points: Point[] = [];
@@ -54,10 +53,13 @@ export class Shape {
     public update = () => {
         this.points.forEach((point) => {
             if (point.y >= GLOBAL.ROWS) {
-                clearInterval(this.moveDownInterval);
                 this.hasLanded = true;
             }
         });
+    };
+
+    public onLanding = () => {
+        clearInterval(this.moveDownInterval);
     };
 
     public render(drawBlock: (point: Point, color: string) => void) {
@@ -68,10 +70,10 @@ export class Shape {
 }
 
 export class IShape extends Shape {
-    constructor(colorArg: string) {
+    constructor() {
         super();
         this.points.push(GLOBAL.INITIAL_POSITION);
-        this.color = colorArg;
+        this.color = randomColorString();
         this.MAX_ROTATION = 2;
         this.currentRotation = Math.floor(Math.random() * this.MAX_ROTATION + 1);
         this.rotate();
@@ -108,28 +110,27 @@ export class IShape extends Shape {
 }
 
 export class OShape extends Shape {
-    constructor(colorArg: string) {
+    constructor() {
         super();
-        this.points.push(GLOBAL.INITIAL_POSITION);
-        this.color = colorArg;
-
-        let x: number = this.points[0].x;
-        let y: number = this.points[0].y;
-        this.points.push(new Point(x, y));
-        this.points.push(new Point(x - 1, y));
-        this.points.push(new Point(x, y - 1));
-        this.points.push(new Point(x - 1, y - 1));
+        this.color = randomColorString();
+        let x: number = GLOBAL.INITIAL_POSITION.x;
+        let y: number = GLOBAL.INITIAL_POSITION.y;
+        let newPointsArray: Point[] = [];
+        newPointsArray.push(new Point(x, y));
+        newPointsArray.push(new Point(x - 1, y));
+        newPointsArray.push(new Point(x, y - 1));
+        newPointsArray.push(new Point(x - 1, y - 1));
+        this.points = newPointsArray;
     }
 
-    public rotate(clockwise: boolean = true): void {}
     public drop(): void {}
 }
 
 export class JShape extends Shape {
-    constructor(colorArg: string) {
+    constructor() {
         super();
         this.points.push(GLOBAL.INITIAL_POSITION);
-        this.color = colorArg;
+        this.color = randomColorString();
         this.MAX_ROTATION = 4;
         this.currentRotation = Math.floor(Math.random() * this.MAX_ROTATION + 1);
         this.rotate();
@@ -144,27 +145,27 @@ export class JShape extends Shape {
         switch (this.currentRotation) {
             case 1:
                 newPointsArray.push(new Point(x, y));
-                newPointsArray.push(new Point(x - 1, y));
                 newPointsArray.push(new Point(x, y - 1));
-                newPointsArray.push(new Point(x, y - 2));
+                newPointsArray.push(new Point(x, y + 1));
+                newPointsArray.push(new Point(x - 1, y + 1));
                 break;
             case 2:
                 newPointsArray.push(new Point(x, y));
+                newPointsArray.push(new Point(x, y - 1));
                 newPointsArray.push(new Point(x + 1, y));
-                newPointsArray.push(new Point(x, y + 1));
-                newPointsArray.push(new Point(x, y + 2));
+                newPointsArray.push(new Point(x + 2, y));
                 break;
             case 3:
                 newPointsArray.push(new Point(x, y));
-                newPointsArray.push(new Point(x + 1, y));
                 newPointsArray.push(new Point(x, y + 1));
                 newPointsArray.push(new Point(x, y - 1));
+                newPointsArray.push(new Point(x + 1, y - 1));
                 break;
             case 4:
                 newPointsArray.push(new Point(x, y));
                 newPointsArray.push(new Point(x - 1, y));
-                newPointsArray.push(new Point(x - 2, y));
-                newPointsArray.push(new Point(x, y + 1));
+                newPointsArray.push(new Point(x + 1, y));
+                newPointsArray.push(new Point(x + 1, y + 1));
                 break;
             default:
                 break;
@@ -176,10 +177,10 @@ export class JShape extends Shape {
 }
 
 export class LShape extends Shape {
-    constructor(colorArg: string) {
+    constructor() {
         super();
         this.points.push(GLOBAL.INITIAL_POSITION);
-        this.color = colorArg;
+        this.color = randomColorString();
         this.MAX_ROTATION = 4;
         this.currentRotation = Math.floor(Math.random() * this.MAX_ROTATION + 1);
         this.rotate();
@@ -193,27 +194,27 @@ export class LShape extends Shape {
         switch (this.currentRotation) {
             case 1:
                 newPointsArray.push(new Point(x, y));
-                newPointsArray.push(new Point(x - 1, y));
-                newPointsArray.push(new Point(x, y + 1));
                 newPointsArray.push(new Point(x, y - 1));
+                newPointsArray.push(new Point(x, y + 1));
+                newPointsArray.push(new Point(x + 1, y + 1));
                 break;
             case 2:
                 newPointsArray.push(new Point(x, y));
                 newPointsArray.push(new Point(x - 1, y));
                 newPointsArray.push(new Point(x + 1, y));
-                newPointsArray.push(new Point(x, y - 1));
+                newPointsArray.push(new Point(x - 1, y + 1));
                 break;
             case 3:
                 newPointsArray.push(new Point(x, y));
-                newPointsArray.push(new Point(x + 1, y));
                 newPointsArray.push(new Point(x, y + 1));
                 newPointsArray.push(new Point(x, y - 1));
+                newPointsArray.push(new Point(x - 1, y - 1));
                 break;
             case 4:
                 newPointsArray.push(new Point(x, y));
                 newPointsArray.push(new Point(x - 1, y));
                 newPointsArray.push(new Point(x + 1, y));
-                newPointsArray.push(new Point(x, y + 1));
+                newPointsArray.push(new Point(x + 1, y - 1));
                 break;
             default:
                 break;
@@ -224,10 +225,10 @@ export class LShape extends Shape {
 }
 
 export class SShape extends Shape {
-    constructor(colorArg: string) {
+    constructor() {
         super();
         this.points.push(GLOBAL.INITIAL_POSITION);
-        this.color = colorArg;
+        this.color = randomColorString();
         this.MAX_ROTATION = 2;
         this.currentRotation = Math.floor(Math.random() * this.MAX_ROTATION + 1);
         this.rotate();
@@ -264,10 +265,10 @@ export class SShape extends Shape {
 }
 
 export class TShape extends Shape {
-    constructor(colorArg: string) {
+    constructor() {
         super();
         this.points.push(GLOBAL.INITIAL_POSITION);
-        this.color = colorArg;
+        this.color = randomColorString();
         this.MAX_ROTATION = 4;
         this.currentRotation = Math.floor(Math.random() * this.MAX_ROTATION + 1);
         this.rotate();
@@ -318,13 +319,41 @@ export class TShape extends Shape {
 }
 
 export class ZShape extends Shape {
-    public points: Point[];
-
-    constructor(colorArg: string) {
+    constructor() {
         super();
-        this.points = [];
+        this.points.push(GLOBAL.INITIAL_POSITION);
+        this.color = randomColorString();
+        this.MAX_ROTATION = 2;
+        this.currentRotation = Math.floor(Math.random() * this.MAX_ROTATION + 1);
+        this.rotate();
     }
 
-    public rotate(clockwise: boolean = true): void {}
+    public rotate(clockwise: boolean = true): void {
+        let x = this.points[0].x;
+        let y = this.points[0].y;
+        let newPointsArray: Point[] = [];
+        this.currentRotation =
+            this.currentRotation + 1 > this.MAX_ROTATION ? 1 : this.currentRotation + 1;
+        switch (this.currentRotation) {
+            case 1:
+                newPointsArray.push(new Point(x, y));
+                newPointsArray.push(new Point(x + 1, y));
+                newPointsArray.push(new Point(x, y - 1));
+                newPointsArray.push(new Point(x - 1, y - 1));
+                break;
+
+            case 2:
+                newPointsArray.push(new Point(x, y));
+                newPointsArray.push(new Point(x - 1, y));
+                newPointsArray.push(new Point(x - 1, y + 1));
+                newPointsArray.push(new Point(x, y - 1));
+                break;
+
+            default:
+                break;
+        }
+        this.points = newPointsArray;
+    }
+
     public drop(): void {}
 }

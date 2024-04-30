@@ -1,3 +1,5 @@
+import { IShape, JShape, LShape, OShape, SShape, Shape, TShape, ZShape } from "./Shape.mjs";
+
 export type GameContext = {
     canvas: HTMLCanvasElement;
     canvasContext: CanvasRenderingContext2D;
@@ -19,11 +21,48 @@ export const GLOBAL = {
     COLUMNS: columns,
     GAP: 2,
     COLORS: ["red", "blue", "green", "yellow", "orange", "cyan"],
-    INITIAL_POSITION: new Point(columns / 2, 0)
+    INITIAL_POSITION: new Point(columns / 2, 3),
 };
 
+export function randomTetromino(): Shape {
+    const randNum = Math.floor(Math.random() * 7);
+    const shapesCharacters = "IOTJLSZ";
+    let shape: Shape;
+
+    switch (shapesCharacters[randNum]) {
+        case "I":
+            shape = new IShape();
+            break;
+
+        case "O":
+            shape = new OShape();
+            break;
+
+        case "T":
+            shape = new TShape();
+            break;
+
+        case "J":
+            shape = new JShape();
+            break;
+
+        case "L":
+            shape = new LShape();
+            break;
+
+        case "S":
+            shape = new SShape();
+            break;
+
+        default:
+            shape = new ZShape();
+            break;
+    }
+    return shape;
+}
+
 export function randomColorString(): string {
-    let randomIdx = Math.floor(Math.random() * GLOBAL.COLORS.length + 1);
+    let randomIdx = Math.floor(Math.random() * GLOBAL.COLORS.length);
     return GLOBAL.COLORS[randomIdx];
 }
 

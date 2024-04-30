@@ -1,6 +1,6 @@
 import { Board } from "./Board.mjs";
-import { IShape, JShape, OShape, SShape, TShape } from "./Shape.mjs";
-import { GLOBAL, GameContext, Point, randomColorString } from "./Global.mjs";
+import { OShape, Shape } from "./Shape.mjs";
+import { GLOBAL, GameContext, Point, randomTetromino } from "./Global.mjs";
 
 export class Game {
     public ctx: CanvasRenderingContext2D;
@@ -9,17 +9,26 @@ export class Game {
     public canvas_height: number;
     public board: Board;
     private blockSize: number;
+    private tetromino: Shape = new OShape();
 
-    private tetromino = new JShape(randomColorString());
-
-    // constructor
     constructor(config: GameContext) {
         this.canvas = config.canvas;
         this.ctx = config.canvasContext;
         this.canvas_width = 0;
         this.canvas_height = 0;
         this.blockSize = 0;
+        this.board = new Board();
 
+        // initalize canvas
+        this.updateCanvasDimensions();
+        window.addEventListener("resize", () => {
+            this.updateCanvasDimensions();
+        });
+
+        this.init();
+    }
+
+    private init(): void {
         // Game Controls
         window.addEventListener("keydown", (e) => {
             switch (e.key) {
@@ -47,20 +56,7 @@ export class Game {
                     break;
             }
         });
-
-        // initalize canvas
-        this.updateCanvasDimensions();
-        window.addEventListener("resize", () => {
-            this.updateCanvasDimensions();
-        });
-
-        this.board = new Board();
-
-        // init
-        this.initialize();
     }
-
-    private initialize = () => {};
 
     private clearCanvas = () => {
         this.ctx.fillStyle = "white";
@@ -85,17 +81,6 @@ export class Game {
         this.blockSize = (this.canvas.width - gapArea * GLOBAL.GAP) / GLOBAL.COLUMNS;
     };
 
-    private drawGrid = () => {
-        for (let i = 0; i < GLOBAL.ROWS; i++) {
-            for (let j = 0; j < GLOBAL.COLUMNS; j++) {
-                let xpos = (this.blockSize + GLOBAL.GAP) * j + GLOBAL.GAP;
-                let ypos = (this.blockSize + GLOBAL.GAP) * i + GLOBAL.GAP;
-                this.ctx.fillStyle = "black";
-                this.ctx.fillRect(xpos, ypos, this.blockSize, this.blockSize);
-            }
-        }
-    };
-
     private drawBlock = (point: Point, color: string) => {
         this.ctx.fillStyle = color;
         let x = GLOBAL.GAP * point.x + this.blockSize * (point.x - 1);
@@ -106,19 +91,21 @@ export class Game {
     public update = () => {
         this.tetromino.update();
         if (this.tetromino.hasLanded) {
+            console.log(`Tetromino has landed.`);
             this.board.update(this.tetromino);
-            this.tetromino = new TShape(randomColorString());
+            this.tetromino.onLanding();
+            this.tetromino = randomTetromino();
         }
     };
 
     public render = () => {
-        this.board.render(this.ctx, this.blockSize);
+        this.clearCanvas();
+        this.board.render(this.drawBlock);
         this.tetromino.render(this.drawBlock);
     };
 
     // game loop
     public run = () => {
-        this.clearCanvas();
         this.update();
         this.render();
         window.requestAnimationFrame(this.run);
