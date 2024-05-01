@@ -5,7 +5,9 @@ export class Board {
     public boardData: string[];
 
     constructor() {
-        this.boardData = new Array(GLOBAL.ROWS * GLOBAL.COLUMNS).fill("#282828");
+        this.boardData = new Array(GLOBAL.ROWS * GLOBAL.COLUMNS).fill(
+            GLOBAL.EMPTY_BLOCK_COLOR_STRING
+        );
     }
 
     public update(shape: Shape): void {
@@ -26,7 +28,11 @@ export class Board {
     }
 
     public isEmptyAt(point: Point): boolean {
-        const idx: number = point.y * GLOBAL.COLUMNS + point.x;
-        return this.boardData[idx] === "black";
+        const idx: number = (point.y) * GLOBAL.COLUMNS + (point.x);
+        if (idx < 0)
+            return true;
+        else if (idx > GLOBAL.ROWS * GLOBAL.COLUMNS)
+            return false;
+        return this.boardData[idx] === GLOBAL.EMPTY_BLOCK_COLOR_STRING;
     }
 }

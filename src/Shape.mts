@@ -1,3 +1,4 @@
+import { Board } from "./Board.mjs";
 import { GLOBAL, Point, canMove, randomColorString } from "./Global.mjs";
 
 export class Shape {
@@ -6,10 +7,13 @@ export class Shape {
     public hasLanded: boolean = false;
     public currentRotation: number = 1;
     public moveDownInterval: any;
-    public moveTimer: number = 1000;
+    public moveTimer: number = 400;
     public MAX_ROTATION: number = 0;
+    private board: Board;
 
-    constructor() {
+    constructor(board: Board) {
+        // reference to the game board
+        this.board = board;
         this.moveDownInterval = setInterval(() => {
             this.move("down");
         }, this.moveTimer);
@@ -18,47 +22,45 @@ export class Shape {
     public rotate(clockwise: boolean = true): void {}
     public drop(): void {}
     public move(direction: string): void {
+        const prevPoints: Point[] = Array.from(this.points);
         if (!this.hasLanded) {
             switch (direction) {
                 case "down":
-                    if (canMove(direction, this.points)) {
-                        this.points.forEach((point) => {
-                            point.y += 1;
-                        });
-                    }
+                    this.points.forEach((point) => {
+                        point.y += 1;
+                    });
                     break;
 
                 case "left":
-                    if (canMove(direction, this.points)) {
-                        this.points.forEach((point) => {
-                            point.x -= 1;
-                        });
-                    }
+                    this.points.forEach((point) => {
+                        point.x -= 1;
+                    });
                     break;
 
                 case "right":
-                    if (canMove(direction, this.points)) {
-                        this.points.forEach((point) => {
-                            point.x += 1;
-                        });
-                    }
+                    this.points.forEach((point) => {
+                        point.x += 1;
+                    });
                     break;
 
                 default:
                     break;
             }
         }
-    }
 
-    public update = () => {
-        this.points.forEach((point) => {
-            if (point.y >= GLOBAL.ROWS) {
+        if (this.checkCollsion()) {
+            if (direction == "down") {
                 this.hasLanded = true;
             }
-        });
-    };
+
+            // reset the position to previous points(position)
+            this.points = prevPoints;
+        }
+    }
 
     public onLanding = () => {
+        this.board.update(this);
+        console.log(`Tetromino has landed.`);
         clearInterval(this.moveDownInterval);
     };
 
@@ -67,11 +69,22 @@ export class Shape {
             drawBlock(point, this.color);
         });
     }
+
+    public checkCollsion = (): boolean => {
+        let collided = false;
+        for (let i = 0; i < this.points.length; i++) {
+            if (!this.board.isEmptyAt(this.points[i])) {
+                collided = true;
+                break;
+            }
+        }
+        return collided;
+    };
 }
 
 export class IShape extends Shape {
-    constructor() {
-        super();
+    constructor(board: Board) {
+        super(board);
         this.points.push(GLOBAL.INITIAL_POSITION);
         this.color = randomColorString();
         this.MAX_ROTATION = 2;
@@ -110,8 +123,8 @@ export class IShape extends Shape {
 }
 
 export class OShape extends Shape {
-    constructor() {
-        super();
+    constructor(board: Board) {
+        super(board);
         this.color = randomColorString();
         let x: number = GLOBAL.INITIAL_POSITION.x;
         let y: number = GLOBAL.INITIAL_POSITION.y;
@@ -127,8 +140,8 @@ export class OShape extends Shape {
 }
 
 export class JShape extends Shape {
-    constructor() {
-        super();
+    constructor(board: Board) {
+        super(board);
         this.points.push(GLOBAL.INITIAL_POSITION);
         this.color = randomColorString();
         this.MAX_ROTATION = 4;
@@ -177,8 +190,8 @@ export class JShape extends Shape {
 }
 
 export class LShape extends Shape {
-    constructor() {
-        super();
+    constructor(board: Board) {
+        super(board);
         this.points.push(GLOBAL.INITIAL_POSITION);
         this.color = randomColorString();
         this.MAX_ROTATION = 4;
@@ -225,8 +238,8 @@ export class LShape extends Shape {
 }
 
 export class SShape extends Shape {
-    constructor() {
-        super();
+    constructor(board: Board) {
+        super(board);
         this.points.push(GLOBAL.INITIAL_POSITION);
         this.color = randomColorString();
         this.MAX_ROTATION = 2;
@@ -265,8 +278,8 @@ export class SShape extends Shape {
 }
 
 export class TShape extends Shape {
-    constructor() {
-        super();
+    constructor(board: Board) {
+        super(board);
         this.points.push(GLOBAL.INITIAL_POSITION);
         this.color = randomColorString();
         this.MAX_ROTATION = 4;
@@ -319,8 +332,8 @@ export class TShape extends Shape {
 }
 
 export class ZShape extends Shape {
-    constructor() {
-        super();
+    constructor(board: Board) {
+        super(board);
         this.points.push(GLOBAL.INITIAL_POSITION);
         this.color = randomColorString();
         this.MAX_ROTATION = 2;

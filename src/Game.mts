@@ -9,7 +9,7 @@ export class Game {
     public canvas_height: number;
     public board: Board;
     private blockSize: number;
-    private tetromino: Shape = new OShape();
+    private tetromino: Shape;
 
     constructor(config: GameContext) {
         this.canvas = config.canvas;
@@ -18,6 +18,7 @@ export class Game {
         this.canvas_height = 0;
         this.blockSize = 0;
         this.board = new Board();
+        this.tetromino = randomTetromino(this.board);
 
         // initalize canvas
         this.updateCanvasDimensions();
@@ -89,12 +90,9 @@ export class Game {
     };
 
     public update = () => {
-        this.tetromino.update();
         if (this.tetromino.hasLanded) {
-            console.log(`Tetromino has landed.`);
-            this.board.update(this.tetromino);
             this.tetromino.onLanding();
-            this.tetromino = randomTetromino();
+            this.tetromino = randomTetromino(this.board);
         }
     };
 

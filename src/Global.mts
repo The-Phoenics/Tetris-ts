@@ -1,3 +1,4 @@
+import { Board } from "./Board.mjs";
 import { IShape, JShape, LShape, OShape, SShape, Shape, TShape, ZShape } from "./Shape.mjs";
 
 export type GameContext = {
@@ -17,45 +18,46 @@ export class Point {
 
 const columns = 10;
 export const GLOBAL = {
+    EMPTY_BLOCK_COLOR_STRING: '#282828',
     ROWS: 20,
     COLUMNS: columns,
     GAP: 2,
     COLORS: ["red", "blue", "green", "yellow", "orange", "cyan"],
-    INITIAL_POSITION: new Point(columns / 2, 3),
+    INITIAL_POSITION: new Point(columns / 2, 1),
 };
 
-export function randomTetromino(): Shape {
+export function randomTetromino(board: Board): Shape {
     const randNum = Math.floor(Math.random() * 7);
     const shapesCharacters = "IOTJLSZ";
     let shape: Shape;
 
     switch (shapesCharacters[randNum]) {
         case "I":
-            shape = new IShape();
+            shape = new IShape(board);
             break;
 
         case "O":
-            shape = new OShape();
+            shape = new OShape(board);
             break;
 
         case "T":
-            shape = new TShape();
+            shape = new TShape(board);
             break;
 
         case "J":
-            shape = new JShape();
+            shape = new JShape(board);
             break;
 
         case "L":
-            shape = new LShape();
+            shape = new LShape(board);
             break;
 
         case "S":
-            shape = new SShape();
+            shape = new SShape(board);
             break;
 
         default:
-            shape = new ZShape();
+            shape = new ZShape(board);
             break;
     }
     return shape;
