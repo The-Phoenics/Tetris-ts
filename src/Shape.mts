@@ -1,5 +1,5 @@
 import { Board } from "./Board.mjs";
-import { GLOBAL, Point, canMove, randomColorString } from "./Global.mjs";
+import { GLOBAL, Point, randomColorString } from "./Global.mjs";
 
 export class Shape {
     public points: Point[] = [];

@@ -8,12 +8,20 @@
 }
 
 body {
-    background-color: rgb(113, 113, 113);
+    background: linear-gradient(
+        0deg,
+        rgba(24, 196, 46, 1) 0%,
+        rgba(91, 201, 118, 1) 35%,
+        rgba(102, 175, 177, 1) 65%,
+        rgba(23, 129, 251, 1) 100%
+    );
+    backdrop-filter: blur(100px);
 }
 
 h1 {
     color: white;
     font-family: "Play", sans-serif;
+    font-size: clamp(22px, calc(4vh), 50px);
 }
 
 button:hover {
