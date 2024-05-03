@@ -18,7 +18,7 @@ export class Point {
 
 const columns = 10;
 export const GLOBAL = {
-    EMPTY_BLOCK_COLOR_STRING: '#282828',
+    EMPTY_BLOCK_COLOR_STRING: '#aaaaaa',
     ROWS: 20,
     COLUMNS: columns,
     GAP: 2,

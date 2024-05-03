@@ -28,13 +28,10 @@ export class Board {
     }
 
     public isEmptyAt(point: Point): boolean {
-        if (point.y < 0)
-            return true;
-
-        const idx: number = (point.y * GLOBAL.COLUMNS + point.x) - 1;
-        if (idx > GLOBAL.ROWS * GLOBAL.COLUMNS)
-            return false;
-        
+        const idx: number = ((point.y - 1) * GLOBAL.COLUMNS + (point.x - 1));
+        if (idx < 0)
+            return true
+            
         return this.boardData[idx] === GLOBAL.EMPTY_BLOCK_COLOR_STRING;
     }
 }

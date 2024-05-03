@@ -6,24 +6,24 @@ export class Shape {
     public color: string = "red";
     public hasLanded: boolean = false;
     public currentRotation: number = 1;
-    public moveDownInterval: any;
+    public moveDownTimeOut: any;
     public moveTimer: number = 400;
     public MAX_ROTATION: number = 0;
+    public gameOver: boolean = false;
+    public canMoveDown: boolean = true;
     private board: Board;
 
     constructor(board: Board) {
-        // reference to the game board
         this.board = board;
-        this.moveDownInterval = setInterval(() => {
-            this.move("down");
-        }, this.moveTimer);
     }
 
     public rotate(clockwise: boolean = true): void {}
     public drop(): void {}
+
     public move(direction: string): void {
-        const prevPoints: Point[] = Array.from(this.points);
+        let prevPoints: Point[];
         if (!this.hasLanded) {
+            prevPoints = this.points.map((point) => new Point(point.x, point.y));
             switch (direction) {
                 case "down":
                     this.points.forEach((point) => {
@@ -46,22 +46,21 @@ export class Shape {
                 default:
                     break;
             }
-        }
 
-        if (this.checkCollsion()) {
-            if (direction == "down") {
-                this.hasLanded = true;
+            if (this.checkCollsion()) {
+                if (direction == "down") {
+                    this.hasLanded = true;
+                }
+                // reset the position to previous points(position)
+                this.points = prevPoints;
             }
-
-            // reset the position to previous points(position)
-            this.points = prevPoints;
         }
     }
 
     public onLanding = () => {
         this.board.update(this);
         console.log(`Tetromino has landed.`);
-        clearInterval(this.moveDownInterval);
+        clearTimeout(this.moveDownTimeOut);
     };
 
     public render(drawBlock: (point: Point, color: string) => void) {
@@ -70,10 +69,25 @@ export class Shape {
         });
     }
 
+    public update = () => {
+        if (this.canMoveDown) {
+            this.move("down");
+            this.canMoveDown = false;
+            this.moveDownTimeOut = setTimeout(() => {
+                this.canMoveDown = true;
+            }, this.moveTimer);
+        }
+    };
+
+    public isOutOfBoard = (point: Point): boolean => {
+        let bool = point.x < 1 || point.y > GLOBAL.ROWS || point.x > GLOBAL.COLUMNS;
+        return bool;
+    };
+
     public checkCollsion = (): boolean => {
         let collided = false;
         for (let i = 0; i < this.points.length; i++) {
-            if (!this.board.isEmptyAt(this.points[i])) {
+            if (this.isOutOfBoard(this.points[i]) || !this.board.isEmptyAt(this.points[i])) {
                 collided = true;
                 break;
             }

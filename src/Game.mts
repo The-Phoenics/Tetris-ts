@@ -90,6 +90,7 @@ export class Game {
     };
 
     public update = () => {
+        this.tetromino.update();
         if (this.tetromino.hasLanded) {
             this.tetromino.onLanding();
             this.tetromino = randomTetromino(this.board);
