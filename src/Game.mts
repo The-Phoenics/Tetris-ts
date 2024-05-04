@@ -1,5 +1,5 @@
 import { Board } from "./Board.mjs";
-import { OShape, Shape } from "./Shape.mjs";
+import { Shape } from "./Shape.mjs";
 import { GLOBAL, GameContext, Point, randomTetromino } from "./Global.mjs";
 
 export class Game {
