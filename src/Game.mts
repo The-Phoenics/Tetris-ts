@@ -1,5 +1,5 @@
 import { Board } from "./Board.mjs";
-import { Shape } from "./Shape.mjs";
+import { IShape, LShape, SShape, Shape } from "./Shape.mjs";
 import { GLOBAL, GameContext, Point, randomTetromino } from "./Global.mjs";
 
 export class Game {
@@ -18,7 +18,7 @@ export class Game {
         this.canvas_height = 0;
         this.blockSize = 0;
         this.board = new Board();
-        this.tetromino = randomTetromino(this.board);
+        this.tetromino = new IShape(this.board);
 
         // initalize canvas
         this.updateCanvasDimensions();
