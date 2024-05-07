@@ -16,13 +16,25 @@ export class Point {
     }
 }
 
+interface GlobalObject {
+    BLOCK_IMG: any,
+    EMPTY_BLOCK_COLOR_STRING: string,
+    ROWS: number,
+    COLUMNS: number,
+    GAP: number,
+    COLORS: string[],
+    INITIAL_POSITION: Point;
+}
+
+// Global Object values are use across the project
 const columns = 10;
-export const GLOBAL = {
+export const GLOBAL: GlobalObject = {
+    BLOCK_IMG: null,
     EMPTY_BLOCK_COLOR_STRING: '#aaaaaa',
     ROWS: 20,
     COLUMNS: columns,
     GAP: 2,
-    COLORS: ["red", "blue", "green", "yellow", "orange", "cyan"],
+    COLORS: ["red", "blue", "green", "yellow", "orange", "cyan", "purple"],
     INITIAL_POSITION: new Point(columns / 2, 1),
 };
 

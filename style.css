@@ -39,6 +39,10 @@ button:hover {
     display: block;
     margin: 0 auto;
     background-color: #f0f0f0;
+    border: 1px solid rgba(1, 1, 1, 0.4);
+    box-shadow: rgba(0, 0, 0, 0.2) 3px 3px 3px 3px, rgba(0, 0, 0, 0.1) 0px 2px 4px 0px,
+        rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset;
+    border-radius: 2px;
 }
 
 .top {

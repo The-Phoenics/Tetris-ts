@@ -60,7 +60,7 @@ export class Game {
     }
 
     private clearCanvas = () => {
-        this.ctx.fillStyle = "white";
+        this.ctx.fillStyle = GLOBAL.EMPTY_BLOCK_COLOR_STRING;
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     };
 
@@ -82,12 +82,27 @@ export class Game {
         this.blockSize = (this.canvas.width - gapArea * GLOBAL.GAP) / GLOBAL.COLUMNS;
     };
 
-    private drawBlock = (point: Point, color: string) => {
+    private drawColorBlock = (point: Point, color: string) => {
         this.ctx.fillStyle = color;
         let x = GLOBAL.GAP * point.x + this.blockSize * (point.x - 1);
         let y = GLOBAL.GAP * point.y + this.blockSize * (point.y - 1);
         this.ctx.fillRect(x, y, this.blockSize, this.blockSize);
     };
+
+    private drawColorBlockImg = (point: Point, color: string) => {
+        let x = GLOBAL.GAP * point.x + this.blockSize * (point.x - 1);
+        let y = GLOBAL.GAP * point.y + this.blockSize * (point.y - 1);
+        if (GLOBAL.BLOCK_IMG == null || GLOBAL.BLOCK_IMG == undefined) {
+            console.log(`Image is null didn't load`);
+        }
+        else {
+            this.ctx.drawImage(GLOBAL.BLOCK_IMG, x, y, this.blockSize, this.blockSize);
+            // this.ctx.globalCompositeOperation = "multiply";
+            this.ctx.globalAlpha = 0.8
+            this.ctx.fillStyle = color;
+            this.ctx.fillRect(x, y, this.blockSize, this.blockSize);
+        }
+    }
 
     public update = () => {
         this.tetromino.update();
@@ -99,8 +114,8 @@ export class Game {
 
     public render = () => {
         this.clearCanvas();
-        this.board.render(this.drawBlock);
-        this.tetromino.render(this.drawBlock);
+        this.board.render(this.drawColorBlockImg);
+        this.tetromino.render(this.drawColorBlockImg);
     };
 
     // game loop
