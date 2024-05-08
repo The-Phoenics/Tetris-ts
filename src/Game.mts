@@ -1,5 +1,5 @@
 import { Board } from "./Board.mjs";
-import { Shape } from "./Shape.mjs";
+import { IShape, Shape } from "./Shape.mjs";
 import { GLOBAL, GameContext, Point, randomTetromino } from "./Global.mjs";
 
 export class Game {
@@ -18,7 +18,7 @@ export class Game {
         this.canvas_height = 0;
         this.blockSize = 0;
         this.board = new Board();
-        this.tetromino = randomTetromino(this.board);
+        this.tetromino = new IShape(this.board);
 
         // initalize canvas
         this.updateCanvasDimensions();
@@ -51,6 +51,10 @@ export class Game {
                 case "ArrowDown":
                 case "s":
                     this.tetromino.move("down");
+                    break;
+
+                case " ":
+                    this.tetromino.drop();
                     break;
 
                 default:
@@ -93,7 +97,7 @@ export class Game {
         let x = GLOBAL.GAP * point.x + this.blockSize * (point.x - 1);
         let y = GLOBAL.GAP * point.y + this.blockSize * (point.y - 1);
         if (GLOBAL.BLOCK_IMG == null || GLOBAL.BLOCK_IMG == undefined) {
-            console.log(`Image is null didn't load`);
+            // ...
         }
         else {
             this.ctx.drawImage(GLOBAL.BLOCK_IMG, x, y, this.blockSize, this.blockSize);

@@ -3,6 +3,7 @@ import { GLOBAL, Point, randomColorString, randomTetromino } from "./Global.mjs"
 
 export class Shape {
     public points: Point[] = [];
+    public dropPoints: Point[] = [];
     public color: string = "red";
     public hasLanded: boolean = false;
     public currentRotation: number = 1;
@@ -50,7 +51,24 @@ export class Shape {
         }
     };
 
-    public drop(): void {}
+    public updateDrop = () => {
+        let tmpDropPos: Point[] = this.points.map((point) => new Point(point.x, point.y));
+        while (!this.checkCollsionAt(tmpDropPos)) {
+            tmpDropPos.forEach((point) => {
+                point.y += 1;
+            });
+        }
+        tmpDropPos.forEach((point) => {
+            point.y -= 1;
+        });
+        this.dropPoints = tmpDropPos;
+    }
+
+    public drop(): void {
+        this.points = this.dropPoints;
+        this.canMoveDown = false;
+        this.hasLanded = true;
+    }
 
     public move(direction: string): void {
         let prevPoints: Point[];
@@ -85,6 +103,7 @@ export class Shape {
                 }
                 this.points = prevPoints;
             }
+            this.updateDrop();
         }
     }
 
@@ -95,6 +114,11 @@ export class Shape {
     };
 
     public render(drawBlock: (point: Point, color: string) => void) {
+        // draw drop shadow
+        this.dropPoints.forEach((point) => {
+            drawBlock(point, GLOBAL.DROP_SHADOW_COLOR);
+        })
+
         this.points.forEach((point) => {
             drawBlock(point, this.color);
         });
@@ -125,6 +149,17 @@ export class Shape {
         }
         return collided;
     };
+
+    public checkCollsionAt = (collisionPoints: Point[]): boolean => {
+        let collided = false;
+        for (let i = 0; i < collisionPoints.length; i++) {
+            if (this.isOutOfBoard(collisionPoints[i]) || !this.board.isEmptyAt(collisionPoints[i])) {
+                collided = true;
+                break;
+            }
+        }
+        return collided;
+    };
 }
 
 export class IShape extends Shape {
@@ -137,8 +172,6 @@ export class IShape extends Shape {
         this.currentRotation = Math.floor(Math.random() * this.MAX_ROTATION + 1);
         this.rotate();
     }
-
-    public drop(): void {}
 }
 
 export class OShape extends Shape {
@@ -155,8 +188,6 @@ export class OShape extends Shape {
         newPointsArray.push(new Point(x - 1, y - 1));
         this.points = newPointsArray;
     }
-
-    public drop(): void {}
 }
 
 export class JShape extends Shape {
@@ -169,8 +200,6 @@ export class JShape extends Shape {
         this.currentRotation = Math.floor(Math.random() * this.MAX_ROTATION + 1);
         this.rotate();
     }
-
-    public drop(): void {}
 }
 
 export class LShape extends Shape {
@@ -183,8 +212,6 @@ export class LShape extends Shape {
         this.currentRotation = Math.floor(Math.random() * this.MAX_ROTATION + 1);
         this.rotate();
     }
-
-    public drop(): void {}
 }
 
 export class SShape extends Shape {
@@ -197,8 +224,6 @@ export class SShape extends Shape {
         this.currentRotation = Math.floor(Math.random() * this.MAX_ROTATION + 1);
         this.rotate();
     }
-
-    public drop(): void {}
 }
 
 export class TShape extends Shape {
@@ -211,8 +236,6 @@ export class TShape extends Shape {
         this.currentRotation = Math.floor(Math.random() * this.MAX_ROTATION + 1);
         this.rotate();
     }
-
-    public drop(): void {}
 }
 
 export class ZShape extends Shape {
@@ -225,8 +248,6 @@ export class ZShape extends Shape {
         this.currentRotation = Math.floor(Math.random() * this.MAX_ROTATION + 1);
         this.rotate();
     }
-
-    public drop(): void {}
 }
 
 function getRotation(shape: Shape, clockwise: boolean = true): Point[] {
