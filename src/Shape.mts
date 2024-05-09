@@ -1,5 +1,6 @@
 import { Board } from "./Board.mjs";
-import { GLOBAL, Point, randomColorString, randomTetromino } from "./Global.mjs";
+import { GLOBAL, Point } from "./Global.mjs";
+import { randomColorString } from "./Utils.mjs";
 
 export class Shape {
     public points: Point[] = [];
@@ -11,7 +12,7 @@ export class Shape {
     public moveTimer: number = 400;
     public MAX_ROTATION: number = 0;
     public gameOver: boolean = false;
-    public canMoveDown: boolean = true;
+    public moveDownTimerFlag: boolean = true;
     public id: string = "";
     private board: Board;
 
@@ -66,7 +67,7 @@ export class Shape {
 
     public drop(): void {
         this.points = this.dropPoints;
-        this.canMoveDown = false;
+        this.moveDownTimerFlag = false;
         this.hasLanded = true;
     }
 
@@ -107,6 +108,15 @@ export class Shape {
         }
     }
 
+    public canMoveDown = () => {
+        // previous position
+        let prevPoints: Point[] = this.points.map((point) => new Point(point.x, point.y));
+        prevPoints.forEach(point => {
+            point.y += 1;
+        });
+        return this.checkCollsionAt(prevPoints);
+    }
+
     public onLanding = () => {
         this.board.update(this);
         console.log(`Tetromino has landed.`);
@@ -125,11 +135,11 @@ export class Shape {
     }
 
     public update = () => {
-        if (this.canMoveDown) {
+        if (this.moveDownTimerFlag) {
             this.move("down");
-            this.canMoveDown = false;
+            this.moveDownTimerFlag = false;
             this.moveDownTimeOut = setTimeout(() => {
-                this.canMoveDown = true;
+                this.moveDownTimerFlag = true;
             }, this.moveTimer);
         }
     };

@@ -1,6 +1,7 @@
 import { Board } from "./Board.mjs";
-import { IShape, Shape } from "./Shape.mjs";
-import { GLOBAL, GameContext, Point, randomTetromino } from "./Global.mjs";
+import { Shape } from "./Shape.mjs";
+import { GLOBAL, GameContext, Point } from "./Global.mjs";
+import { randomTetromino } from "./Utils.mjs";
 
 export class Game {
     public ctx: CanvasRenderingContext2D;
@@ -8,6 +9,7 @@ export class Game {
     public canvas_width: number;
     public canvas_height: number;
     public board: Board;
+    public gameOver: boolean;
     private blockSize: number;
     private tetromino: Shape;
 
@@ -18,7 +20,8 @@ export class Game {
         this.canvas_height = 0;
         this.blockSize = 0;
         this.board = new Board();
-        this.tetromino = new IShape(this.board);
+        this.tetromino = randomTetromino(this.board);
+        this.gameOver = false;
 
         // initalize canvas
         this.updateCanvasDimensions();
@@ -98,21 +101,23 @@ export class Game {
         let y = GLOBAL.GAP * point.y + this.blockSize * (point.y - 1);
         if (GLOBAL.BLOCK_IMG == null || GLOBAL.BLOCK_IMG == undefined) {
             // ...
-        }
-        else {
+        } else {
             this.ctx.drawImage(GLOBAL.BLOCK_IMG, x, y, this.blockSize, this.blockSize);
             // this.ctx.globalCompositeOperation = "multiply";
-            this.ctx.globalAlpha = 0.8
+            this.ctx.globalAlpha = 0.8;
             this.ctx.fillStyle = color;
             this.ctx.fillRect(x, y, this.blockSize, this.blockSize);
         }
-    }
+    };
 
     public update = () => {
         this.tetromino.update();
         if (this.tetromino.hasLanded) {
             this.tetromino.onLanding();
             this.tetromino = randomTetromino(this.board);
+
+            // check game over
+            if (!this.tetromino.canMoveDown()) this.gameOver = true;
         }
     };
 
@@ -122,10 +127,13 @@ export class Game {
         this.tetromino.render(this.drawColorBlockImg);
     };
 
+    public onGameOver = () => {
+        alert(`Game Over`);
+    }
+
     // game loop
     public run = () => {
         this.update();
         this.render();
-        window.requestAnimationFrame(this.run);
     };
 }
