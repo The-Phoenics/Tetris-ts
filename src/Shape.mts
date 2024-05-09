@@ -63,7 +63,7 @@ export class Shape {
             point.y -= 1;
         });
         this.dropPoints = tmpDropPos;
-    }
+    };
 
     public drop(): void {
         this.points = this.dropPoints;
@@ -108,18 +108,8 @@ export class Shape {
         }
     }
 
-    public canMoveDown = () => {
-        // previous position
-        let prevPoints: Point[] = this.points.map((point) => new Point(point.x, point.y));
-        prevPoints.forEach(point => {
-            point.y += 1;
-        });
-        return this.checkCollsionAt(prevPoints);
-    }
-
     public onLanding = () => {
         this.board.update(this);
-        console.log(`Tetromino has landed.`);
         clearTimeout(this.moveDownTimeOut);
     };
 
@@ -127,7 +117,7 @@ export class Shape {
         // draw drop shadow
         this.dropPoints.forEach((point) => {
             drawBlock(point, GLOBAL.DROP_SHADOW_COLOR);
-        })
+        });
 
         this.points.forEach((point) => {
             drawBlock(point, this.color);
@@ -150,20 +140,30 @@ export class Shape {
     };
 
     public checkCollsion = (): boolean => {
-        let collided = false;
         for (let i = 0; i < this.points.length; i++) {
             if (this.isOutOfBoard(this.points[i]) || !this.board.isEmptyAt(this.points[i])) {
-                collided = true;
-                break;
+                return true;
             }
         }
-        return collided;
+        return false;
     };
+
+    public checkGameOver = () => {
+        for (let i = 0; i < this.points.length; i++) {
+            if (this.points[i].y >= 1 && !this.board.isEmptyAt(this.points[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public checkCollsionAt = (collisionPoints: Point[]): boolean => {
         let collided = false;
         for (let i = 0; i < collisionPoints.length; i++) {
-            if (this.isOutOfBoard(collisionPoints[i]) || !this.board.isEmptyAt(collisionPoints[i])) {
+            if (
+                this.isOutOfBoard(collisionPoints[i]) ||
+                !this.board.isEmptyAt(collisionPoints[i])
+            ) {
                 collided = true;
                 break;
             }

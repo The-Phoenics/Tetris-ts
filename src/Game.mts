@@ -21,20 +21,17 @@ export class Game {
         this.blockSize = 0;
         this.board = new Board();
         this.tetromino = randomTetromino(this.board);
-        this.gameOver = false;
+        this.gameOver = true;
 
         // initalize canvas
         this.updateCanvasDimensions();
         window.addEventListener("resize", () => {
             this.updateCanvasDimensions();
         });
-
-        this.init();
+        window.addEventListener("keydown", this.gameControls);
     }
 
-    private init(): void {
-        // Game Controls
-        window.addEventListener("keydown", (e) => {
+    public gameControls = (e: KeyboardEvent) => {
             switch (e.key) {
                 case "ArrowUp":
                 case "w":
@@ -63,7 +60,6 @@ export class Game {
                 default:
                     break;
             }
-        });
     }
 
     private clearCanvas = () => {
@@ -80,7 +76,8 @@ export class Game {
         const RATIO = 0.502;
         this.canvas.height = Math.floor(document.querySelector(".canvas-container")?.clientHeight!);
 
-        if (this.canvas.height % 2 != 0) this.canvas.height = this.canvas.height - 1;
+        if (this.canvas.height % 2 != 0)
+            this.canvas.height = this.canvas.height - 1;
 
         this.canvas.width = Math.floor(this.canvas.height * RATIO);
 
@@ -116,8 +113,9 @@ export class Game {
             this.tetromino.onLanding();
             this.tetromino = randomTetromino(this.board);
 
-            // check game over
-            if (!this.tetromino.canMoveDown()) this.gameOver = true;
+            if (this.tetromino.checkGameOver()) {
+                this.gameOver = true;
+            }
         }
     };
 
@@ -125,15 +123,5 @@ export class Game {
         this.clearCanvas();
         this.board.render(this.drawColorBlockImg);
         this.tetromino.render(this.drawColorBlockImg);
-    };
-
-    public onGameOver = () => {
-        alert(`Game Over`);
-    }
-
-    // game loop
-    public run = () => {
-        this.update();
-        this.render();
     };
 }

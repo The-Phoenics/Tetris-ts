@@ -1,7 +1,6 @@
 import { Game } from "./Game.mjs";
 
 class GameManager {
-    public gameOver: boolean = true;
     public assetsLoaded: boolean = false;
 
     public startBtn: HTMLButtonElement;
@@ -23,22 +22,22 @@ class GameManager {
     }
 
     public onGameStart = () => {
-        console.log(`Game started.`)
-        this.gameOver = false;
+        this.init();
+        this.game.gameOver = false;
         this.startBtn.style.visibility = 'hidden';
     }
 
     public onGameOver = () => {
-        console.log(`Game Over!`)
+        window.removeEventListener("keydown", this.game.gameControls);
         this.startBtn.style.visibility = 'visible';
     }
 
     public run = () => {
-        if (!this.gameOver && this.assetsLoaded) {
+        if (!this.game.gameOver && this.assetsLoaded) {
             this.game.update();
             this.game.render();
         } else {
-
+            this.onGameOver();
             this.game.render();
         }
     }

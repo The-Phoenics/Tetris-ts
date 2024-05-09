@@ -34,7 +34,7 @@ button:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 90vh;
+    height: 92vh;
 }
 
 .game-canvas {
@@ -52,18 +52,15 @@ button:hover {
     justify-content: center;
     align-items: center;
     text-align: center;
-    height: 5vh;
-}
-
-.bottom {
-    height: 5vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    height: 6vh;
 }
 
 .start-btn {
     position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 2px;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -72,10 +69,9 @@ button:hover {
     text-decoration: none;
     text-align: center;
     border: solid 2px #333333;
-    border-radius: 25px;
-    margin: 10px auto;
-    background-color: rgba(3, 3, 3, 0.7);
+    border-radius: 20px;
     color: white;
+    background-color: rgba(3, 3, 3, 0.7);
     font-size: 1.2em;
     font-weight: bold;
     text-transform: uppercase;

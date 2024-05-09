@@ -6,7 +6,6 @@ window.onload = () => {
     GLOBAL.BLOCK_IMG.src = "./block.jpg";
     GLOBAL.BLOCK_IMG.onload = () => {
         gm.assetsLoaded = true;
-        console.log(`Asset loading finished.`);
     };
 };
 
