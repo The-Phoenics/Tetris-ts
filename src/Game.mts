@@ -1,5 +1,5 @@
 import { Board } from "./Board.mjs";
-import { Shape } from "./Shape.mjs";
+import { IShape, Shape } from "./Shape.mjs";
 import { GLOBAL, GameContext, Point } from "./Global.mjs";
 import { randomTetromino } from "./Utils.mjs";
 
@@ -10,6 +10,7 @@ export class Game {
     public canvas_height: number;
     public board: Board;
     public gameOver: boolean;
+    private isSpaceHeldDown: boolean;
     private blockSize: number;
     private tetromino: Shape;
 
@@ -20,8 +21,9 @@ export class Game {
         this.canvas_height = 0;
         this.blockSize = 0;
         this.board = new Board();
-        this.tetromino = randomTetromino(this.board);
+        this.tetromino = new IShape(this.board);
         this.gameOver = true;
+        this.isSpaceHeldDown = false;
 
         // initalize canvas
         this.updateCanvasDimensions();
@@ -29,38 +31,44 @@ export class Game {
             this.updateCanvasDimensions();
         });
         window.addEventListener("keydown", this.gameControls);
+        window.addEventListener("keyup", (e) => {
+            if (e.key == " ") this.isSpaceHeldDown = false;
+        });
     }
 
     public gameControls = (e: KeyboardEvent) => {
-            switch (e.key) {
-                case "ArrowUp":
-                case "w":
-                    this.tetromino.rotate(true);
-                    break;
+        switch (e.key) {
+            case "ArrowUp":
+            case "w":
+                this.tetromino.rotate(true);
+                break;
 
-                case "ArrowLeft":
-                case "a":
-                    this.tetromino.move("left");
-                    break;
+            case "ArrowLeft":
+            case "a":
+                this.tetromino.move("left");
+                break;
 
-                case "ArrowRight":
-                case "d":
-                    this.tetromino.move("right");
-                    break;
+            case "ArrowRight":
+            case "d":
+                this.tetromino.move("right");
+                break;
 
-                case "ArrowDown":
-                case "s":
-                    this.tetromino.move("down");
-                    break;
+            case "ArrowDown":
+            case "s":
+                this.tetromino.move("down");
+                break;
 
-                case " ":
+            case " ":
+                if (!this.isSpaceHeldDown) {
                     this.tetromino.drop();
-                    break;
+                    this.isSpaceHeldDown = true;
+                }
+                break;
 
-                default:
-                    break;
-            }
-    }
+            default:
+                break;
+        }
+    };
 
     private clearCanvas = () => {
         this.ctx.fillStyle = GLOBAL.EMPTY_BLOCK_COLOR_STRING;
@@ -96,15 +104,14 @@ export class Game {
     private drawColorBlockImg = (point: Point, color: string) => {
         let x = GLOBAL.GAP * point.x + this.blockSize * (point.x - 1);
         let y = GLOBAL.GAP * point.y + this.blockSize * (point.y - 1);
-        if (GLOBAL.BLOCK_IMG == null || GLOBAL.BLOCK_IMG == undefined) {
-            // ...
-        } else {
+        if (GLOBAL.BLOCK_IMG) {
             this.ctx.drawImage(GLOBAL.BLOCK_IMG, x, y, this.blockSize, this.blockSize);
             // this.ctx.globalCompositeOperation = "multiply";
             this.ctx.globalAlpha = 0.8;
             this.ctx.fillStyle = color;
             this.ctx.fillRect(x, y, this.blockSize, this.blockSize);
         }
+
     };
 
     public update = () => {

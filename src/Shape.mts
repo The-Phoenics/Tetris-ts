@@ -33,6 +33,9 @@ export class Shape {
             if (this.checkCollsion()) {
                 this.points = prevPoints;
             }
+
+            // update drop position as tetromino rotates
+            this.updateDrop();
         }
     }
 
@@ -104,6 +107,7 @@ export class Shape {
                 }
                 this.points = prevPoints;
             }
+            // update the drop position as tetromino changes posiiton
             this.updateDrop();
         }
     }
@@ -155,7 +159,7 @@ export class Shape {
             }
         }
         return false;
-    }
+    };
 
     public checkCollsionAt = (collisionPoints: Point[]): boolean => {
         let collided = false;
@@ -178,7 +182,7 @@ export class IShape extends Shape {
         this.id = "I";
         this.points.push(GLOBAL.INITIAL_POSITION);
         this.color = randomColorString();
-        this.MAX_ROTATION = 2;
+        this.MAX_ROTATION = 3;
         this.currentRotation = Math.floor(Math.random() * this.MAX_ROTATION + 1);
         this.rotate();
     }
@@ -230,7 +234,7 @@ export class SShape extends Shape {
         this.id = "S";
         this.points.push(GLOBAL.INITIAL_POSITION);
         this.color = randomColorString();
-        this.MAX_ROTATION = 2;
+        this.MAX_ROTATION = 4;
         this.currentRotation = Math.floor(Math.random() * this.MAX_ROTATION + 1);
         this.rotate();
     }
@@ -254,7 +258,7 @@ export class ZShape extends Shape {
         this.id = "Z";
         this.points.push(GLOBAL.INITIAL_POSITION);
         this.color = randomColorString();
-        this.MAX_ROTATION = 2;
+        this.MAX_ROTATION = 4;
         this.currentRotation = Math.floor(Math.random() * this.MAX_ROTATION + 1);
         this.rotate();
     }
@@ -272,17 +276,25 @@ function getRotation(shape: Shape, clockwise: boolean = true): Point[] {
         case "I":
             switch (shape.currentRotation) {
                 case 1:
+                    x = x + 1;
                     newPointsArray.push(new Point(x, y));
+                    newPointsArray.push(new Point(x + 1, y));
                     newPointsArray.push(new Point(x - 1, y));
                     newPointsArray.push(new Point(x - 2, y));
-                    newPointsArray.push(new Point(x + 1, y));
                     break;
 
                 case 2:
                     newPointsArray.push(new Point(x, y));
                     newPointsArray.push(new Point(x, y - 1));
-                    newPointsArray.push(new Point(x, y - 2));
                     newPointsArray.push(new Point(x, y + 1));
+                    newPointsArray.push(new Point(x, y + 2));
+                    break;
+
+                case 3:
+                    newPointsArray.push(new Point(x - 1, y));
+                    newPointsArray.push(new Point(x - 1, y - 1));
+                    newPointsArray.push(new Point(x - 1, y + 1));
+                    newPointsArray.push(new Point(x - 1, y + 2));
                     break;
 
                 default:
@@ -332,27 +344,27 @@ function getRotation(shape: Shape, clockwise: boolean = true): Point[] {
             switch (shape.currentRotation) {
                 case 1:
                     newPointsArray.push(new Point(x, y));
-                    newPointsArray.push(new Point(x, y - 1));
-                    newPointsArray.push(new Point(x, y + 1));
-                    newPointsArray.push(new Point(x - 1, y + 1));
+                    newPointsArray.push(new Point(x - 1, y));
+                    newPointsArray.push(new Point(x + 1, y));
+                    newPointsArray.push(new Point(x - 1, y - 1));
                     break;
                 case 2:
                     newPointsArray.push(new Point(x, y));
                     newPointsArray.push(new Point(x, y - 1));
-                    newPointsArray.push(new Point(x + 1, y));
-                    newPointsArray.push(new Point(x + 2, y));
-                    break;
-                case 3:
-                    newPointsArray.push(new Point(x, y));
                     newPointsArray.push(new Point(x, y + 1));
-                    newPointsArray.push(new Point(x, y - 1));
                     newPointsArray.push(new Point(x + 1, y - 1));
                     break;
-                case 4:
+                case 3:
                     newPointsArray.push(new Point(x, y));
                     newPointsArray.push(new Point(x - 1, y));
                     newPointsArray.push(new Point(x + 1, y));
                     newPointsArray.push(new Point(x + 1, y + 1));
+                    break;
+                case 4:
+                    newPointsArray.push(new Point(x, y));
+                    newPointsArray.push(new Point(x, y - 1));
+                    newPointsArray.push(new Point(x, y + 1));
+                    newPointsArray.push(new Point(x - 1, y + 1));
                     break;
                 default:
                     break;
@@ -363,27 +375,27 @@ function getRotation(shape: Shape, clockwise: boolean = true): Point[] {
             switch (shape.currentRotation) {
                 case 1:
                     newPointsArray.push(new Point(x, y));
+                    newPointsArray.push(new Point(x - 1, y));
+                    newPointsArray.push(new Point(x + 1, y));
+                    newPointsArray.push(new Point(x + 1, y - 1));
+                    break;
+                case 2:
+                    newPointsArray.push(new Point(x, y));
                     newPointsArray.push(new Point(x, y - 1));
                     newPointsArray.push(new Point(x, y + 1));
                     newPointsArray.push(new Point(x + 1, y + 1));
                     break;
-                case 2:
+                case 3:
                     newPointsArray.push(new Point(x, y));
                     newPointsArray.push(new Point(x - 1, y));
                     newPointsArray.push(new Point(x + 1, y));
                     newPointsArray.push(new Point(x - 1, y + 1));
                     break;
-                case 3:
+                case 4:
                     newPointsArray.push(new Point(x, y));
                     newPointsArray.push(new Point(x, y + 1));
                     newPointsArray.push(new Point(x, y - 1));
                     newPointsArray.push(new Point(x - 1, y - 1));
-                    break;
-                case 4:
-                    newPointsArray.push(new Point(x, y));
-                    newPointsArray.push(new Point(x - 1, y));
-                    newPointsArray.push(new Point(x + 1, y));
-                    newPointsArray.push(new Point(x + 1, y - 1));
                     break;
                 default:
                     break;
@@ -401,8 +413,22 @@ function getRotation(shape: Shape, clockwise: boolean = true): Point[] {
 
                 case 2:
                     newPointsArray.push(new Point(x, y));
-                    newPointsArray.push(new Point(x - 1, y));
+                    newPointsArray.push(new Point(x, y - 1));
+                    newPointsArray.push(new Point(x + 1, y));
+                    newPointsArray.push(new Point(x + 1, y + 1));
+                    break;
+
+                case 3:
+                    newPointsArray.push(new Point(x, y));
+                    newPointsArray.push(new Point(x + 1, y));
+                    newPointsArray.push(new Point(x, y + 1));
+                    newPointsArray.push(new Point(x - 1, y + 1));
+                    break;
+
+                case 4:
+                    newPointsArray.push(new Point(x, y));
                     newPointsArray.push(new Point(x - 1, y - 1));
+                    newPointsArray.push(new Point(x - 1, y));
                     newPointsArray.push(new Point(x, y + 1));
                     break;
 
@@ -415,16 +441,30 @@ function getRotation(shape: Shape, clockwise: boolean = true): Point[] {
             switch (shape.currentRotation) {
                 case 1:
                     newPointsArray.push(new Point(x, y));
-                    newPointsArray.push(new Point(x + 1, y));
                     newPointsArray.push(new Point(x, y - 1));
                     newPointsArray.push(new Point(x - 1, y - 1));
+                    newPointsArray.push(new Point(x + 1, y));
                     break;
 
                 case 2:
                     newPointsArray.push(new Point(x, y));
+                    newPointsArray.push(new Point(x + 1, y));
+                    newPointsArray.push(new Point(x, y + 1));
+                    newPointsArray.push(new Point(x + 1, y - 1));
+                    break;
+
+                case 3:
+                    newPointsArray.push(new Point(x, y));
+                    newPointsArray.push(new Point(x - 1, y));
+                    newPointsArray.push(new Point(x, y + 1));
+                    newPointsArray.push(new Point(x + 1, y + 1));
+                    break;
+
+                case 4:
+                    newPointsArray.push(new Point(x, y));
+                    newPointsArray.push(new Point(x, y - 1));
                     newPointsArray.push(new Point(x - 1, y));
                     newPointsArray.push(new Point(x - 1, y + 1));
-                    newPointsArray.push(new Point(x, y - 1));
                     break;
 
                 default:
