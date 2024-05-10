@@ -1,5 +1,6 @@
 import { GLOBAL, Point } from "./Global.mjs";
 import { Shape } from "./Shape.mjs";
+import { randomColorString } from "./Utils.mjs";
 
 export class Board {
     public boardData: string[];
@@ -9,10 +10,6 @@ export class Board {
         this.boardData = new Array(GLOBAL.ROWS * GLOBAL.COLUMNS).fill(
             GLOBAL.EMPTY_BLOCK_COLOR_STRING
         );
-
-        for (let i = 0; i < GLOBAL.ROWS * GLOBAL.COLUMNS; i++) {
-            
-        }
     }
 
     public update(shape: Shape): void {
@@ -25,22 +22,30 @@ export class Board {
     }
 
     public clearLines = () => {
-        for (let r = 0; r < GLOBAL.ROWS; r++) {
+        for (let r = GLOBAL.ROWS - 1; r >= 0; r--) {
             let rowIsFilled: boolean = true;
             for (let c = 0; c < GLOBAL.COLUMNS; c++) {
-                if (this.boardData[r * GLOBAL.COLUMNS + c] == GLOBAL.EMPTY_BLOCK_COLOR_STRING)
-                    rowIsFilled = false
+                if (this.boardData[r * GLOBAL.COLUMNS + c] == GLOBAL.EMPTY_BLOCK_COLOR_STRING) {
+                    rowIsFilled = false;
+                    break;
+                }
             }
 
             if (rowIsFilled) {
+                const rowStart: number = r * GLOBAL.COLUMNS;
+                const deleteCount: number = GLOBAL.COLUMNS;
+
                 // delete the current row
-                this.boardData.splice(r * GLOBAL.COLUMNS, r * GLOBAL.COLUMNS + GLOBAL.COLUMNS);
+                this.boardData.splice(rowStart, deleteCount);
+
                 // add an empty block row at beginning
-                let emptyBlockRow: string[] = new Array(GLOBAL.COLUMNS).fill(GLOBAL.EMPTY_BLOCK_COLOR_STRING);
+                let emptyBlockRow: string[] = new Array(GLOBAL.COLUMNS).fill(
+                    GLOBAL.EMPTY_BLOCK_COLOR_STRING
+                );
                 this.boardData = emptyBlockRow.concat(this.boardData);
             }
         }
-    }
+    };
 
     public render(drawBlock: (point: Point, color: string) => void): void {
         for (let x = 0; x < GLOBAL.ROWS; x++) {
@@ -53,10 +58,9 @@ export class Board {
     }
 
     public isEmptyAt(point: Point): boolean {
-        const idx: number = ((point.y - 1) * GLOBAL.COLUMNS + (point.x - 1));
-        if (idx < 0)
-            return true
-            
+        const idx: number = (point.y - 1) * GLOBAL.COLUMNS + (point.x - 1);
+        if (idx < 0) return true;
+
         return this.boardData[idx] === GLOBAL.EMPTY_BLOCK_COLOR_STRING;
     }
 }

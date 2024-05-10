@@ -33,6 +33,6 @@ export const GLOBAL: GlobalObject = {
     ROWS: 20,
     COLUMNS: columns,
     GAP: 2,
-    COLORS: ["#ff0000cc", "#00ff00cc", "#0000ffcc", "#ffff00cc", "#00ffffcc", "#ff00ffcc"],
+    COLORS: ["#ff000077", "#00ff0077", "#0000ff77", "#ffff0077", "#00ffff77", "#ff00ff77"],
     INITIAL_POSITION: new Point(columns / 2, 1),
 };
