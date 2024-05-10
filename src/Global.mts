@@ -29,7 +29,7 @@ const columns = 10;
 export const GLOBAL: GlobalObject = {
     BLOCK_IMG: null,
     DROP_SHADOW_COLOR: '#6f6f6f33',
-    EMPTY_BLOCK_COLOR_STRING: '#aaaaaa',
+    EMPTY_BLOCK_COLOR_STRING: '#ccecfc9f',
     ROWS: 20,
     COLUMNS: columns,
     GAP: 2,

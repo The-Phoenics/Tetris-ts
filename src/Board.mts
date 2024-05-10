@@ -3,11 +3,16 @@ import { Shape } from "./Shape.mjs";
 
 export class Board {
     public boardData: string[];
+    public clearedLines: number = 0;
 
     constructor() {
         this.boardData = new Array(GLOBAL.ROWS * GLOBAL.COLUMNS).fill(
             GLOBAL.EMPTY_BLOCK_COLOR_STRING
         );
+
+        for (let i = 0; i < GLOBAL.ROWS * GLOBAL.COLUMNS; i++) {
+            
+        }
     }
 
     public update(shape: Shape): void {
