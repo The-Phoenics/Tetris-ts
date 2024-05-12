@@ -2,11 +2,15 @@ import { Board } from "./Board.mjs";
 import { GLOBAL } from "./Global.mjs";
 import { IShape, JShape, LShape, OShape, SShape, Shape, TShape, ZShape } from "./Shape.mjs";
 
+let prevRandomNum: number = -1;
 export function randomTetromino(board: Board): Shape {
-    const randNum = Math.floor(Math.random() * 7);
+    let randNum: number = 0;
+    while (randNum == prevRandomNum) {
+        randNum = Math.floor(Math.random() * 7);
+    }
+    prevRandomNum = randNum;
     const shapesCharacters = "IOTJLSZ";
     let shape: Shape;
-
     switch (shapesCharacters[randNum]) {
         case "I":
             shape = new IShape(board);
@@ -39,7 +43,12 @@ export function randomTetromino(board: Board): Shape {
     return shape;
 }
 
+let prevRandomIdx: number = -1;
 export function randomColorString(): string {
-    let randomIdx = Math.floor(Math.random() * GLOBAL.COLORS.length);
+    let randomIdx: number = 0;
+    while (randomIdx == prevRandomIdx) {
+        randomIdx = Math.floor(Math.random() * GLOBAL.COLORS.length);
+    }
+    prevRandomIdx = randomIdx;
     return GLOBAL.COLORS[randomIdx];
 }

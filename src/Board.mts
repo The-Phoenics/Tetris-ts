@@ -1,6 +1,5 @@
 import { GLOBAL, Point } from "./Global.mjs";
 import { Shape } from "./Shape.mjs";
-import { randomColorString } from "./Utils.mjs";
 
 export class Board {
     public boardData: string[];
@@ -43,6 +42,9 @@ export class Board {
                     GLOBAL.EMPTY_BLOCK_COLOR_STRING
                 );
                 this.boardData = emptyBlockRow.concat(this.boardData);
+                
+                r = GLOBAL.ROWS;
+                this.clearedLines++;
             }
         }
     };
