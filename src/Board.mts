@@ -1,3 +1,4 @@
+import { AudioManager } from "./AudioManager.mjs";
 import { GLOBAL, Point } from "./Global.mjs";
 import { Shape } from "./Shape.mjs";
 
@@ -44,17 +45,22 @@ export class Board {
                 this.boardData = emptyBlockRow.concat(this.boardData);
                 
                 r = GLOBAL.ROWS;
-                this.clearedLines++;
+                this.onLineClearing();
             }
         }
     };
 
+    private onLineClearing = () => {
+        AudioManager.playLineClear();
+        this.clearedLines++;
+    }
+
     public render(drawBlock: (point: Point, color: string) => void): void {
-        for (let x = 0; x < GLOBAL.ROWS; x++) {
-            for (let y = 0; y < GLOBAL.COLUMNS; y++) {
+        for (let r = 0; r < GLOBAL.ROWS; r++) {
+            for (let c = 0; c < GLOBAL.COLUMNS; c++) {
                 // board index is for the color of block
-                let boardIdx = x * GLOBAL.COLUMNS + y;
-                drawBlock(new Point(y + 1, x + 1), this.boardData[boardIdx]);
+                let boardIdx = r * GLOBAL.COLUMNS + c;
+                drawBlock(new Point(c + 1, r + 1), this.boardData[boardIdx]);
             }
         }
     }

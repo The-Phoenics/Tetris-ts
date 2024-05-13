@@ -10,6 +10,8 @@ export class Game {
     public canvas_height: number;
     public board: Board;
     public gameOver: boolean;
+    public pieceCanvas: HTMLCanvasElement = document.querySelector(".piece-canvas") as HTMLCanvasElement;
+    private pieceCanvasCtx: CanvasRenderingContext2D = this.pieceCanvas.getContext("2d") as CanvasRenderingContext2D;
     private isSpaceHeldDown: boolean;
     private blockSize: number;
     private tetromino: Shape;
@@ -23,7 +25,7 @@ export class Game {
         this.board = new Board();
         this.tetromino = randomTetromino(this.board);
         this.gameOver = true;
-        this.isSpaceHeldDown = false;
+        this.isSpaceHeldDown = false; 
 
         // initalize canvas
         this.updateCanvasDimensions();
@@ -34,6 +36,22 @@ export class Game {
         window.addEventListener("keyup", (e) => {
             if (e.key == " ") this.isSpaceHeldDown = false;
         });
+    }
+
+    public updatePieceCanvas = () => {
+        const gapArea = GLOBAL.PIECE_CANVAS_COLUMNS + 1;
+        this.pieceCanvas.width = ((this.blockSize * GLOBAL.PIECE_CANVAS_COLUMNS) / GLOBAL.GAP) + gapArea;
+        this.pieceCanvas.height = this.pieceCanvas.width;
+    }
+
+    public renderPieceCanvas = () => {
+        this.clearCanvas(this.pieceCanvasCtx);
+        // draw piece canvas with empty color blocks
+        for (let r = 0; r < GLOBAL.PIECE_CANVAS_ROWS; r++) {
+            for (let c = 0; c < GLOBAL.PIECE_CANVAS_ROWS; c++) {
+                this.drawColorBlockImg(new Point(c + 1, r + 1), GLOBAL.EMPTY_BLOCK_COLOR_STRING, this.pieceCanvasCtx);
+            }
+        }
     }
 
     public gameControls = (e: KeyboardEvent) => {
@@ -70,9 +88,9 @@ export class Game {
         }
     };
 
-    private clearCanvas = () => {
-        this.ctx.fillStyle = GLOBAL.EMPTY_BLOCK_COLOR_STRING;
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    private clearCanvas = (canvasContext: CanvasRenderingContext2D = this.ctx) => {
+        canvasContext.fillStyle = GLOBAL.EMPTY_BLOCK_COLOR_STRING;
+        canvasContext.fillRect(0, 0, this.canvas.width, this.canvas.height);
     };
 
     /*
@@ -81,13 +99,12 @@ export class Game {
      */
     private updateCanvasDimensions = () => {
         // ratio of canvas width by height
-        const RATIO = 0.502;
         this.canvas.height = Math.floor(document.querySelector(".canvas-container")?.clientHeight!);
 
         if (this.canvas.height % 2 != 0)
             this.canvas.height = this.canvas.height - 1;
 
-        this.canvas.width = Math.floor(this.canvas.height * RATIO);
+        this.canvas.width = Math.floor(this.canvas.height * GLOBAL.WIDTH_HEIGHT_RATIO);
 
         // calculate block size
         let gapArea = GLOBAL.COLUMNS + 1;
@@ -101,15 +118,15 @@ export class Game {
         this.ctx.fillRect(x, y, this.blockSize, this.blockSize);
     };
 
-    private drawColorBlockImg = (point: Point, color: string) => {
+    private drawColorBlockImg = (point: Point, color: string, canvasContext: CanvasRenderingContext2D = this.ctx) => {
         let x = GLOBAL.GAP * point.x + this.blockSize * (point.x - 1);
         let y = GLOBAL.GAP * point.y + this.blockSize * (point.y - 1);
         if (GLOBAL.BLOCK_IMG) {
-            this.ctx.drawImage(GLOBAL.BLOCK_IMG, x, y, this.blockSize, this.blockSize);
+            canvasContext.drawImage(GLOBAL.BLOCK_IMG, x, y, this.blockSize, this.blockSize);
             // this.ctx.globalCompositeOperation = "multiply";
-            this.ctx.globalAlpha = 0.8;
-            this.ctx.fillStyle = color;
-            this.ctx.fillRect(x, y, this.blockSize, this.blockSize);
+            canvasContext.globalAlpha = 0.8;
+            canvasContext.fillStyle = color;
+            canvasContext.fillRect(x, y, this.blockSize, this.blockSize);
         }
 
     };
@@ -124,11 +141,13 @@ export class Game {
                 this.gameOver = true;
             }
         }
+        this.updatePieceCanvas();
     };
 
     public render = () => {
         this.clearCanvas();
         this.board.render(this.drawColorBlockImg);
         this.tetromino.render(this.drawColorBlockImg);
+        this.renderPieceCanvas();
     };
 }

@@ -1,5 +1,6 @@
 import { GLOBAL } from "./Global.mjs";
 import GameManager from "./GameManager.mjs";
+import { AudioManager } from "./AudioManager.mjs";
 
 window.onload = () => {
     GLOBAL.BLOCK_IMG = new Image();
@@ -7,9 +8,11 @@ window.onload = () => {
     GLOBAL.BLOCK_IMG.onload = () => {
         gm.assetsLoaded = true;
     };
+    AudioManager.init();
 };
 
 const gm: GameManager = new GameManager();
+AudioManager.playTetrisMusic();
 
 (function main() {
     gm.run();
