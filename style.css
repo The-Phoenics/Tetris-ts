@@ -48,11 +48,22 @@ button:hover {
     top: 10%;
     margin-right: 700px;
     display: flex;
+    flex-direction: column;
     color: white;
     text-align: center;
-    gap: 20px;
+    gap: 2px;
     font-size: 1.5rem;
     text-align: center;
+    text-shadow: none;
+}
+
+.score-header {
+    color: #dce0e5;
+    text-shadow: none;
+}
+
+.score-value {
+    color: #65c5da;
     text-shadow: none;
 }
 
@@ -79,6 +90,7 @@ canvas {
 }
 
 .start-btn {
+    z-index: 5;
     position: absolute;
     display: flex;
     justify-content: center;

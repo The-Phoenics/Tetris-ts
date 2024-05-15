@@ -1,34 +1,39 @@
 import { Board } from "./Board.mjs";
 import { Shape } from "./Shape.mjs";
 import { GLOBAL, GameContext, Point } from "./Global.mjs";
-import { randomTetromino } from "./Utils.mjs";
+import { Utils } from "./Utils.mjs";
+import NextPieceCanvas from "./NextPieceCanvas.mjs";
 
 export class Game {
-    public ctx: CanvasRenderingContext2D;
-    public canvas: HTMLCanvasElement;
     public canvas_width: number;
     public canvas_height: number;
     public board: Board;
     public gameOver: boolean;
-    public pieceCanvas: HTMLCanvasElement = document.querySelector(".piece-canvas") as HTMLCanvasElement;
-    private pieceCanvasCtx: CanvasRenderingContext2D = this.pieceCanvas.getContext("2d") as CanvasRenderingContext2D;
+    private ctx: CanvasRenderingContext2D;
+    private canvas: HTMLCanvasElement;
+    private nextPieceCanvas: NextPieceCanvas;
     private isSpaceHeldDown: boolean;
     private blockSize: number;
     private tetromino: Shape;
+    private scoreValueElement: HTMLHeadElement;
 
     constructor(config: GameContext) {
+        this.scoreValueElement = document.querySelector(".score-value") as HTMLHeadElement;
+        this.scoreValueElement.innerText = String(0);
         this.canvas = config.canvas;
         this.ctx = config.canvasContext;
         this.canvas_width = 0;
         this.canvas_height = 0;
         this.blockSize = 0;
         this.board = new Board();
-        this.tetromino = randomTetromino(this.board);
+        this.tetromino = Utils.randomTetromino(this.board);
         this.gameOver = true;
         this.isSpaceHeldDown = false; 
 
-        // initalize canvas
+        // initalize gameplay and next piece canvas object
         this.updateCanvasDimensions();
+        this.nextPieceCanvas = new NextPieceCanvas(this.blockSize);
+
         window.addEventListener("resize", () => {
             this.updateCanvasDimensions();
         });
@@ -36,22 +41,6 @@ export class Game {
         window.addEventListener("keyup", (e) => {
             if (e.key == " ") this.isSpaceHeldDown = false;
         });
-    }
-
-    public updatePieceCanvas = () => {
-        const gapArea = GLOBAL.PIECE_CANVAS_COLUMNS + 1;
-        this.pieceCanvas.width = ((this.blockSize * GLOBAL.PIECE_CANVAS_COLUMNS) / GLOBAL.GAP) + gapArea;
-        this.pieceCanvas.height = this.pieceCanvas.width;
-    }
-
-    public renderPieceCanvas = () => {
-        this.clearCanvas(this.pieceCanvasCtx);
-        // draw piece canvas with empty color blocks
-        for (let r = 0; r < GLOBAL.PIECE_CANVAS_ROWS; r++) {
-            for (let c = 0; c < GLOBAL.PIECE_CANVAS_ROWS; c++) {
-                this.drawColorBlockImg(new Point(c + 1, r + 1), GLOBAL.EMPTY_BLOCK_COLOR_STRING, this.pieceCanvasCtx);
-            }
-        }
     }
 
     public gameControls = (e: KeyboardEvent) => {
@@ -88,11 +77,6 @@ export class Game {
         }
     };
 
-    private clearCanvas = (canvasContext: CanvasRenderingContext2D = this.ctx) => {
-        canvasContext.fillStyle = GLOBAL.EMPTY_BLOCK_COLOR_STRING;
-        canvasContext.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    };
-
     /*
      * Resonsive canvas
      * calculate height and block size for canvas based on view width
@@ -111,43 +95,28 @@ export class Game {
         this.blockSize = (this.canvas.width - gapArea * GLOBAL.GAP) / GLOBAL.COLUMNS;
     };
 
-    private drawColorBlock = (point: Point, color: string) => {
-        this.ctx.fillStyle = color;
-        let x = GLOBAL.GAP * point.x + this.blockSize * (point.x - 1);
-        let y = GLOBAL.GAP * point.y + this.blockSize * (point.y - 1);
-        this.ctx.fillRect(x, y, this.blockSize, this.blockSize);
-    };
-
-    private drawColorBlockImg = (point: Point, color: string, canvasContext: CanvasRenderingContext2D = this.ctx) => {
-        let x = GLOBAL.GAP * point.x + this.blockSize * (point.x - 1);
-        let y = GLOBAL.GAP * point.y + this.blockSize * (point.y - 1);
-        if (GLOBAL.BLOCK_IMG) {
-            canvasContext.drawImage(GLOBAL.BLOCK_IMG, x, y, this.blockSize, this.blockSize);
-            // this.ctx.globalCompositeOperation = "multiply";
-            canvasContext.globalAlpha = 0.8;
-            canvasContext.fillStyle = color;
-            canvasContext.fillRect(x, y, this.blockSize, this.blockSize);
-        }
-
-    };
+    private updateScore = (numOfLinesCleared: number) => {
+        this.scoreValueElement.innerText = String(numOfLinesCleared);
+    }
 
     public update = () => {
         this.tetromino.update();
         if (this.tetromino.hasLanded) {
             this.tetromino.onLanding();
-            this.tetromino = randomTetromino(this.board);
+            this.tetromino = Utils.randomTetromino(this.board);
 
             if (this.tetromino.checkGameOver()) {
                 this.gameOver = true;
             }
         }
-        this.updatePieceCanvas();
+        this.nextPieceCanvas.update(this.blockSize);
+        this.updateScore(this.board.numOfLinesCleared);
     };
 
     public render = () => {
-        this.clearCanvas();
-        this.board.render(this.drawColorBlockImg);
-        this.tetromino.render(this.drawColorBlockImg);
-        this.renderPieceCanvas();
+        Utils.clearCanvas(this.canvas);
+        this.board.render(this.ctx, this.blockSize);
+        this.tetromino.render(this.ctx, this.blockSize);
+        this.nextPieceCanvas.render(this.blockSize);
     };
 }

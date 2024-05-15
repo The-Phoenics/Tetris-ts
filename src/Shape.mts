@@ -1,6 +1,6 @@
 import { Board } from "./Board.mjs";
 import { GLOBAL, Point } from "./Global.mjs";
-import { randomColorString } from "./Utils.mjs";
+import { Utils } from "./Utils.mjs";
 
 export class Shape {
     public points: Point[] = [];
@@ -9,7 +9,7 @@ export class Shape {
     public hasLanded: boolean = false;
     public currentRotation: number = 1;
     public moveDownTimeOut: any;
-    public moveTimer: number = 400;
+    public moveTime: number = 400;
     public MAX_ROTATION: number = 0;
     public gameOver: boolean = false;
     public moveDownTimerFlag: boolean = true;
@@ -107,7 +107,7 @@ export class Shape {
                 }
                 this.points = prevPoints;
             }
-            // update the drop position as tetromino changes posiiton
+            // update the drop position as tetromino changes position
             this.updateDrop();
         }
     }
@@ -117,14 +117,14 @@ export class Shape {
         clearTimeout(this.moveDownTimeOut);
     };
 
-    public render(drawBlock: (point: Point, color: string) => void) {
-        // draw drop shadow
+    public render = (ctx: CanvasRenderingContext2D, blockSize: number) => {
+        // draw where tetromino will draw
         this.dropPoints.forEach((point) => {
-            drawBlock(point, GLOBAL.DROP_SHADOW_COLOR);
+            Utils.drawColorBlockImg(point, GLOBAL.DROP_SHADOW_COLOR, ctx, blockSize);
         });
-
+        // draw the tetromino
         this.points.forEach((point) => {
-            drawBlock(point, this.color);
+            Utils.drawColorBlockImg(point, this.color, ctx, blockSize);
         });
     }
 
@@ -134,7 +134,7 @@ export class Shape {
             this.moveDownTimerFlag = false;
             this.moveDownTimeOut = setTimeout(() => {
                 this.moveDownTimerFlag = true;
-            }, this.moveTimer);
+            }, this.moveTime);
         }
     };
 
@@ -181,7 +181,7 @@ export class IShape extends Shape {
         super(board);
         this.id = "I";
         this.points.push(GLOBAL.INITIAL_POSITION);
-        this.color = randomColorString();
+        this.color = Utils.randomColorString();
         this.MAX_ROTATION = 3;
         this.currentRotation = Math.floor(Math.random() * this.MAX_ROTATION + 1);
         this.rotate();
@@ -192,7 +192,7 @@ export class OShape extends Shape {
     constructor(board: Board) {
         super(board);
         this.id = "O";
-        this.color = randomColorString();
+        this.color = Utils.randomColorString();
         let x: number = GLOBAL.INITIAL_POSITION.x;
         let y: number = GLOBAL.INITIAL_POSITION.y;
         let newPointsArray: Point[] = [];
@@ -209,7 +209,7 @@ export class JShape extends Shape {
         super(board);
         this.id = "J";
         this.points.push(GLOBAL.INITIAL_POSITION);
-        this.color = randomColorString();
+        this.color = Utils.randomColorString();
         this.MAX_ROTATION = 4;
         this.currentRotation = Math.floor(Math.random() * this.MAX_ROTATION + 1);
         this.rotate();
@@ -221,7 +221,7 @@ export class LShape extends Shape {
         super(board);
         this.id = "L";
         this.points.push(GLOBAL.INITIAL_POSITION);
-        this.color = randomColorString();
+        this.color = Utils.randomColorString();
         this.MAX_ROTATION = 4;
         this.currentRotation = Math.floor(Math.random() * this.MAX_ROTATION + 1);
         this.rotate();
@@ -233,7 +233,7 @@ export class SShape extends Shape {
         super(board);
         this.id = "S";
         this.points.push(GLOBAL.INITIAL_POSITION);
-        this.color = randomColorString();
+        this.color = Utils.randomColorString();
         this.MAX_ROTATION = 4;
         this.currentRotation = Math.floor(Math.random() * this.MAX_ROTATION + 1);
         this.rotate();
@@ -245,7 +245,7 @@ export class TShape extends Shape {
         super(board);
         this.id = "T";
         this.points.push(GLOBAL.INITIAL_POSITION);
-        this.color = randomColorString();
+        this.color = Utils.randomColorString();
         this.MAX_ROTATION = 4;
         this.currentRotation = Math.floor(Math.random() * this.MAX_ROTATION + 1);
         this.rotate();
@@ -257,7 +257,7 @@ export class ZShape extends Shape {
         super(board);
         this.id = "Z";
         this.points.push(GLOBAL.INITIAL_POSITION);
-        this.color = randomColorString();
+        this.color = Utils.randomColorString();
         this.MAX_ROTATION = 4;
         this.currentRotation = Math.floor(Math.random() * this.MAX_ROTATION + 1);
         this.rotate();

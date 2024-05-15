@@ -1,10 +1,11 @@
 import { AudioManager } from "./AudioManager.mjs";
 import { GLOBAL, Point } from "./Global.mjs";
 import { Shape } from "./Shape.mjs";
+import { Utils } from "./Utils.mjs";
 
 export class Board {
     public boardData: string[];
-    public clearedLines: number = 0;
+    public numOfLinesCleared: number = 0;
 
     constructor() {
         this.boardData = new Array(GLOBAL.ROWS * GLOBAL.COLUMNS).fill(
@@ -52,15 +53,15 @@ export class Board {
 
     private onLineClearing = () => {
         AudioManager.playLineClear();
-        this.clearedLines++;
+        this.numOfLinesCleared++;
     }
 
-    public render(drawBlock: (point: Point, color: string) => void): void {
+    public render = (ctx: CanvasRenderingContext2D, blockSize: number) => {
         for (let r = 0; r < GLOBAL.ROWS; r++) {
             for (let c = 0; c < GLOBAL.COLUMNS; c++) {
                 // board index is for the color of block
                 let boardIdx = r * GLOBAL.COLUMNS + c;
-                drawBlock(new Point(c + 1, r + 1), this.boardData[boardIdx]);
+                Utils.drawColorBlockImg(new Point(c + 1, r + 1), this.boardData[boardIdx], ctx, blockSize);
             }
         }
     }
