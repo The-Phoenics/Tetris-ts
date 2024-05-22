@@ -41,7 +41,6 @@ class GameManager {
             this.game.render();
         }
     }
-    
 }
 
 export default GameManager;

@@ -6,10 +6,10 @@ class NextPieceCanvas {
     private ctx: CanvasRenderingContext2D = this.canvas.getContext("2d") as CanvasRenderingContext2D;
 
     constructor(blockSize: number) {
-        this.update(blockSize);
+        this.updateCanvasDimensions(blockSize);
     }
 
-    public update = (blockSize: number) => {
+    public updateCanvasDimensions = (blockSize: number) => {
         const numOfGapLines = GLOBAL.PIECE_CANVAS_COLUMNS + 1;
         this.canvas.width = ((blockSize * GLOBAL.PIECE_CANVAS_COLUMNS)) + numOfGapLines * GLOBAL.GAP;
         this.canvas.height = this.canvas.width;
@@ -23,6 +23,33 @@ class NextPieceCanvas {
                 Utils.drawColorBlockImg(new Point(c + 1, r + 1), GLOBAL.EMPTY_BLOCK_COLOR_STRING, this.ctx, blockSize);
             }
         }
+        const nextTetrominoPoints = Utils.tetrominos[1].points;
+        const nextTetrominoColor = Utils.tetrominos[1].color;
+        this.drawNextPiece(nextTetrominoPoints, nextTetrominoColor, blockSize);
+    }
+
+    private normalizePosition = (tetromino: Point[]): Point[]  => {
+        let originX = tetromino[0].x;
+        let originY = tetromino[0].y;
+        const resTetromino: Point[] = tetromino.map(point => {
+            const x = point.x - originX;
+            const y = point.y - originY;
+            return new Point(x, y); 
+        })
+        return resTetromino;
+    }
+
+    public drawNextPiece = (tetromino: Point[], color: string, blockSize: number) => {
+        const nextPieceTetromino = this.normalizePosition(tetromino);
+        let x = GLOBAL.PIECE_CANVAS_ROWS / 2;
+        let y = GLOBAL.PIECE_CANVAS_COLUMNS / 2;
+
+        // move the position to center of next piece canvas
+        nextPieceTetromino.forEach(point => {
+            point.x = point.x + x;
+            point.y = point.y + y;
+            Utils.drawColorBlockImg(point, color, this.ctx, blockSize);
+        })
     }
 
 }

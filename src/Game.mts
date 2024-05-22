@@ -1,19 +1,17 @@
 import { Board } from "./Board.mjs";
 import { Shape } from "./Shape.mjs";
-import { GLOBAL, GameContext, Point } from "./Global.mjs";
+import { GLOBAL, GameContext } from "./Global.mjs";
 import { Utils } from "./Utils.mjs";
 import NextPieceCanvas from "./NextPieceCanvas.mjs";
 
 export class Game {
-    public canvas_width: number;
-    public canvas_height: number;
     public board: Board;
     public gameOver: boolean;
     private ctx: CanvasRenderingContext2D;
     private canvas: HTMLCanvasElement;
     private nextPieceCanvas: NextPieceCanvas;
-    private isSpaceHeldDown: boolean;
-    private blockSize: number;
+    private isSpaceHeldDown: boolean = false;
+    private blockSize: number = 0;
     private tetromino: Shape;
     private scoreValueElement: HTMLHeadElement;
 
@@ -22,13 +20,10 @@ export class Game {
         this.scoreValueElement.innerText = String(0);
         this.canvas = config.canvas;
         this.ctx = config.canvasContext;
-        this.canvas_width = 0;
-        this.canvas_height = 0;
-        this.blockSize = 0;
         this.board = new Board();
-        this.tetromino = Utils.randomTetromino(this.board);
+        Utils.init(this.board);
+        this.tetromino = Utils.tetrominos[0];
         this.gameOver = true;
-        this.isSpaceHeldDown = false; 
 
         // initalize gameplay and next piece canvas object
         this.updateCanvasDimensions();
@@ -36,11 +31,14 @@ export class Game {
 
         window.addEventListener("resize", () => {
             this.updateCanvasDimensions();
+            this.nextPieceCanvas.updateCanvasDimensions(this.blockSize);
         });
         window.addEventListener("keydown", this.gameControls);
         window.addEventListener("keyup", (e) => {
-            if (e.key == " ") this.isSpaceHeldDown = false;
+            if (e.key == " ")
+                this.isSpaceHeldDown = false;
         });
+
     }
 
     public gameControls = (e: KeyboardEvent) => {
@@ -100,17 +98,19 @@ export class Game {
     }
 
     public update = () => {
+        if (!this.tetromino)
+            console.log('undefined tetromino')
+        
+
         this.tetromino.update();
         if (this.tetromino.hasLanded) {
             this.tetromino.onLanding();
-            this.tetromino = Utils.randomTetromino(this.board);
-
+            this.tetromino = Utils.get(this.board)[0];
             if (this.tetromino.checkGameOver()) {
                 this.gameOver = true;
             }
         }
-        this.nextPieceCanvas.update(this.blockSize);
-        this.updateScore(this.board.numOfLinesCleared);
+        this.updateScore(this.board.numOfLinesCleared * 5);
     };
 
     public render = () => {

@@ -4,6 +4,19 @@ import { IShape, JShape, LShape, OShape, SShape, Shape, TShape, ZShape } from ".
 
 export namespace Utils {
 
+    export const tetrominos: Shape[] = [];
+    export function init(board: Board) {
+        // initialize current and previous tetromino array
+        tetrominos.push(randomTetromino(board));
+        tetrominos.push(randomTetromino(board));
+    }
+
+    export function get(board: Board): Shape[] {
+        tetrominos[0] = tetrominos[1];
+        tetrominos[1] = randomTetromino(board);        
+        return Utils.tetrominos;
+    }
+
     let prevRandomNum: number = -1;
     export function randomTetromino(board: Board): Shape {
         let randNum: number = 0;

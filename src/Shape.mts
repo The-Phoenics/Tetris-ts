@@ -90,7 +90,7 @@ export class Shape {
                         point.x -= 1;
                     });
                     break;
-
+                    
                 case "right":
                     this.points.forEach((point) => {
                         point.x += 1;
@@ -155,6 +155,7 @@ export class Shape {
     public checkGameOver = () => {
         for (let i = 0; i < this.points.length; i++) {
             if (this.points[i].y >= 1 && !this.board.isEmptyAt(this.points[i])) {
+                console.log('game over')
                 return true;
             }
         }
