@@ -14,11 +14,6 @@ export class Board {
     }
 
     public update(shape: Shape): void {
-        if (!shape) {
-            console.log('undefined this tetromino')
-        } else {
-            console.log('fine')
-        }
         shape.points.forEach((point) => {
             const idx = (point.y - 1) * GLOBAL.COLUMNS + (point.x - 1);
             this.boardData[idx] = shape.color;

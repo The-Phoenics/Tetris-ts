@@ -38,7 +38,6 @@ export class Game {
             if (e.key == " ")
                 this.isSpaceHeldDown = false;
         });
-
     }
 
     public gameControls = (e: KeyboardEvent) => {

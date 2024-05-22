@@ -7,8 +7,8 @@ export namespace Utils {
     export const tetrominos: Shape[] = [];
     export function init(board: Board) {
         // initialize current and previous tetromino array
-        tetrominos.push(randomTetromino(board));
-        tetrominos.push(randomTetromino(board));
+        tetrominos[0] = (randomTetromino(board));
+        tetrominos[1] = (randomTetromino(board));
     }
 
     export function get(board: Board): Shape[] {
@@ -18,13 +18,13 @@ export namespace Utils {
     }
 
     let prevRandomNum: number = -1;
+    const shapesCharacters = "IOTJLSZ";
     export function randomTetromino(board: Board): Shape {
-        let randNum: number = 0;
-        while (randNum == prevRandomNum) {
+        let randNum: number = -1;
+        while (randNum == prevRandomNum && randNum < 0) {
             randNum = Math.floor(Math.random() * 7);
         }
         prevRandomNum = randNum;
-        const shapesCharacters = "IOTJLSZ";
         let shape: Shape;
         switch (shapesCharacters[randNum]) {
             case "I":
