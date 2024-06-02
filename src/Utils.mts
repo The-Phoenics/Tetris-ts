@@ -21,10 +21,11 @@ export namespace Utils {
     const shapesCharacters = "IOTJLSZ";
     export function randomTetromino(board: Board): Shape {
         let randNum: number = -1;
-        while (randNum == prevRandomNum && randNum < 0) {
+        while (randNum == prevRandomNum || randNum < 0) {
             randNum = Math.floor(Math.random() * 7);
         }
         prevRandomNum = randNum;
+        console.log(randNum)
         let shape: Shape;
         switch (shapesCharacters[randNum]) {
             case "I":
